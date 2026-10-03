@@ -557,8 +557,11 @@ p {
 }
 .public-cta {
   padding: 58px 0;
-  background: #719f40;
+  background: #52772c;
   color: white;
+}
+.public-cta .hero-eyebrow {
+  color: #fff;
 }
 .cta-content {
   display: flex;
@@ -1440,7 +1443,6 @@ h1,h2,h3 {font-weight:600;letter-spacing:normal;}
 .industry-card p {font-size:14px;}
 .integration-grid {display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
 .integration-card {display:flex;gap:16px;padding:23px;align-items:flex-start;}
-.integration-icon {width:44px;height:44px;display:grid;place-items:center;flex-shrink:0;background:#f0f5e9;color:var(--accent-dark);font-size:14px;font-weight:600;border-radius:8px;}
 .integration-card h3 {font-size:18px;margin-bottom:5px;}
 .integration-card strong {font-size:12px;font-weight:500;}
 .integration-card p {font-size:12px;margin:7px 0 12px;}

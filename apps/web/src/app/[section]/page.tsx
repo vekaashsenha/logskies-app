@@ -8,9 +8,27 @@ import {
   industries,
 } from "@/components/marketing";
 import ContactForm from "@/components/contact-form";
-import { IndustryExplorer, WorkflowDemo, PricingMatrix } from "@/components/interactive-marketing";
-import { IntegrationHub, KnowledgeHub, FaqSection } from "@/components/resource-sections";
-const sections = ["solutions", "features", "pricing", "faq", "contact", "integrations", "dgca-compliance", "knowledge-hub", "privacy"];
+import {
+  IndustryExplorer,
+  WorkflowDemo,
+  PricingMatrix,
+} from "@/components/interactive-marketing";
+import {
+  IntegrationHub,
+  KnowledgeHub,
+  FaqSection,
+} from "@/components/resource-sections";
+const sections = [
+  "solutions",
+  "features",
+  "pricing",
+  "faq",
+  "contact",
+  "integrations",
+  "dgca-compliance",
+  "knowledge-hub",
+  "privacy",
+];
 export function generateStaticParams() {
   return sections.map((section) => ({ section }));
 }
@@ -55,8 +73,8 @@ const features = [
   ],
   [
     "Battery health & audit evidence",
-    "Qualified measurements and verified requirements will support battery estimates and report review.",
-    "In development",
+    "Review qualified capacity and voltage-sag estimates alongside a pass/fail/pending flight evidence checklist. Missing measurements remain unassessed.",
+    "Local estimates and evidence review available",
   ],
 ];
 export default async function Section({
@@ -229,10 +247,121 @@ export default async function Section({
           </section>
         </>
       )}
-      {section === "integrations" && <><PageIntro label="HARDWARE & LOG FORMATS" title="Connect the context behind your flights." description="An integration roadmap for onboard logs, ground stations and agricultural autopilots. Actual compatibility will be verified with real sample logs."/><IntegrationHub/><WorkflowDemo/></>}
-      {section === "knowledge-hub" && <><PageIntro label="LOGSKIES KNOWLEDGE HUB" title="Make your records work harder." description="Practical guides for commercial drone teams: physical battery identities, source logs and reviewable operational evidence."/><KnowledgeHub/></>}
-      {section === "dgca-compliance" && <><PageIntro label="COMPLIANCE RECORD PREPARATION" title="Evidence first. Clearer audit preparation." description="Keep the aircraft, pilot, mission and permission evidence together, with your company logo on every report draft."/><section className="public-section public-container"><div className="feature-grid">{[["Flight evidence", "Source logs, timestamps, coordinates and qualified altitude measurements."], ["Operational permissions", "Applicable airspace restrictions across the flight route, with permission references."], ["Pilot & reviewer", "Pilot credentials at the flight date and a documented review of missing evidence."]].map(([title,text])=><article className="public-card" key={title}><h2>{title}</h2><p>{text}</p><span className="status-pill">Verification pipeline in development</span></article>)}</div><p className="notice compliance-note">Current exports are drafts. Official eGCA schema verification and automated compliance checks are pending. LogSkies is independent and is not endorsed by DGCA.</p><p>Consult the <a href="https://digitalsky.dgca.gov.in/assets/files/dronerules.pdf" target="_blank" rel="noreferrer">official Drone Rules</a>, subsequent amendments and current operational restrictions before flight.</p><Link href="/dashboard" className="primary">Preview a company-branded draft →</Link></section><FaqSection/></>}
-      {section === "privacy" && <><PageIntro label="PROTOTYPE DATA INFORMATION" title="Understand where your records live." description="This prototype disclosure describes the current implementation. A full production privacy policy will be published before launch."/><section className="public-section public-container guide-article"><h2>Local demo</h2><p>Demo fleet records and uploaded branding are stored in this browser’s local storage. Clearing site data removes these local records.</p><h2>Connected workspace</h2><p>When configured, Supabase handles account authentication, organization fleet records and private storage for logos and logs. The project owner must configure and verify the service before use.</p><h2>Contact drafts</h2><p>The contact form creates an inquiry draft locally. It does not send your details to a sales team.</p><h2>Before production</h2><p>Retention periods, account deletion, privacy contact details and any analytics services must be defined before production onboarding.</p></section></>}
+      {section === "integrations" && (
+        <>
+          <PageIntro
+            label="HARDWARE & LOG FORMATS"
+            title="Connect the context behind your flights."
+            description="Import supported onboard and ground-station logs, preserve the original evidence and review your flight records. Compatibility depends on firmware and the recorded log format."
+          />
+          <IntegrationHub />
+          <WorkflowDemo />
+        </>
+      )}
+      {section === "knowledge-hub" && (
+        <>
+          <PageIntro
+            label="LOGSKIES KNOWLEDGE HUB"
+            title="Make your records work harder."
+            description="Practical guides for commercial drone teams: physical battery identities, source logs and reviewable operational evidence."
+          />
+          <KnowledgeHub />
+        </>
+      )}
+      {section === "dgca-compliance" && (
+        <>
+          <PageIntro
+            label="COMPLIANCE RECORD PREPARATION"
+            title="Evidence first. Clearer audit preparation."
+            description="Keep the aircraft, pilot, mission and permission evidence together, with your company logo on every report draft."
+          />
+          <section className="public-section public-container">
+            <div className="feature-grid">
+              {[
+                [
+                  "Flight evidence",
+                  "Source logs, timestamps, coordinates and qualified altitude measurements.",
+                ],
+                [
+                  "Operational permissions",
+                  "Applicable airspace restrictions across the flight route, with permission references.",
+                ],
+                [
+                  "Pilot & reviewer",
+                  "Pilot credentials at the flight date and a documented review of missing evidence.",
+                ],
+              ].map(([title, text]) => (
+                <article className="public-card" key={title}>
+                  <h2>{title}</h2>
+                  <p>{text}</p>
+                  <span className="status-pill">
+                    Local evidence review available
+                  </span>
+                </article>
+              ))}
+            </div>
+            <p className="notice compliance-note">
+              Current exports are drafts. Local checks cover credential dates,
+              reviewed altitude and permission evidence. Official eGCA format
+              acceptance and authoritative airspace verification remain pending.
+              LogSkies is independent and is not endorsed by DGCA.
+            </p>
+            <p>
+              Consult the{" "}
+              <a
+                href="https://digitalsky.dgca.gov.in/assets/files/dronerules.pdf"
+                target="_blank"
+                rel="noreferrer"
+              >
+                official Drone Rules
+              </a>
+              , subsequent amendments and current operational restrictions
+              before flight.
+            </p>
+            <Link href="/dashboard" className="primary">
+              Preview a company-branded draft →
+            </Link>
+          </section>
+          <FaqSection />
+        </>
+      )}
+      {section === "privacy" && (
+        <>
+          <PageIntro
+            label="PROTOTYPE DATA INFORMATION"
+            title="Understand where your records live."
+            description="This prototype disclosure describes the current implementation. A full production privacy policy will be published before launch."
+          />
+          <section className="public-section public-container guide-article">
+            <h2>Local demo</h2>
+            <p>
+              Fleet records and branding are stored in local storage. Imported
+              logs, source originals, observations and reviews are stored in
+              IndexedDB in this browser. They do not yet sync across devices.
+              Clearing site data removes these records; retain originals and
+              export evidence backups.
+            </p>
+            <h2>Connected workspace</h2>
+            <p>
+              When configured, Supabase handles account authentication,
+              organization fleet records and private storage for logos and logs.
+              The project owner must configure and verify the service before
+              use.
+            </p>
+            <h2>Contact drafts</h2>
+            <p>
+              The contact form creates an inquiry draft locally. It does not
+              send your details to a sales team.
+            </p>
+            <h2>Before production</h2>
+            <p>
+              Retention periods, account deletion, privacy contact details and
+              any analytics services must be defined before production
+              onboarding.
+            </p>
+          </section>
+        </>
+      )}
       {section !== "contact" && <CallToAction />}
     </main>
   );

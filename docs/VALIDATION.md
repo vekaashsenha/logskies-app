@@ -2,6 +2,8 @@
 
 Passed:
 
+- Marketing content refresh: removed integration abbreviation tiles, updated compatibility/FAQ/features/pricing/privacy copy to match local capabilities, and verified the shared CTA kicker is white on its darker green background. FAQ expansion and 390 px layout checked; web lint and production build passed.
+
 - Combined automated tests: 15/15 (domain, telemetry, health, airspace geometry and PostgreSQL migration isolation).
 - Web ESLint: no errors or warnings.
 - Android TypeScript check: passed.
