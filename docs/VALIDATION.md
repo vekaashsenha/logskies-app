@@ -2,7 +2,7 @@
 
 Passed:
 
-- Shared domain tests: 3/3 (missing telemetry, matching boundaries/ambiguity, QR/CSV input).
+- Combined automated tests: 15/15 (domain, telemetry, health, airspace geometry and PostgreSQL migration isolation).
 - Web ESLint: no errors or warnings.
 - Android TypeScript check: passed.
 - Android Expo lint: passed.
@@ -10,13 +10,16 @@ Passed:
 - Expo Android bundle export: passed after Expo Router setup and dependency alignment.
 - Expo Doctor: 21/21 checks passed after resolving duplicate React and native animation packages.
 - Browser checks: battery creation, preflight session recording, company name, test logo upload and branded report preview.
+- Local DataFlash import: 366 supported records, two battery channels, 120-second interval; review persisted after reload and appeared under Reports with the test company logo.
+- Narrow flight report viewport: 319 px with 304 px document width; no page-width overflow. CSV payload/link inspected, but the in-app browser did not return a download-completion event. File download completion in Chrome/Edge remains to be checked.
 - Narrow web viewport: checked at 390 px; no page-width overflow observed.
 
 Not verified:
 
-- Supabase migration execution, real authentication, cross-device records and RLS/storage isolation. Supabase account sign-in is pending.
+- Hosted Supabase migration execution, real authentication, cross-device records and Storage endpoints. Local PostgreSQL isolation tests passed; hosted integration still needs configuration.
 - Camera scanning/native permissions on an Android device; bundle export is not an APK/device test.
 - Actual PDF pagination and hosted report generation.
+- Independent customer MAVLink logs, real battery calibration, and hosted shared flight processing.
 - DGCA template acceptance, current route airspace evaluation and audit evidence completeness.
 
 Dependency diagnostic:

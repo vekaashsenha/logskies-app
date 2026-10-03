@@ -1517,3 +1517,24 @@ h1,h2,h3 {font-weight:600;letter-spacing:normal;}
 @media(max-width:1050px) {.menu-toggle{display:block}.site-navigation{display:none;position:absolute;top:88px;left:0;right:0;background:white;padding:22px 30px;border-bottom:1px solid var(--border);flex-direction:column;align-items:stretch;gap:8px;box-shadow:0 15px 20px #00000008}.site-navigation.is-open{display:flex}.site-navigation>a{font-size:14px;padding:8px}.site-navigation .nav-demo{margin:0;display:block}.site-navigation .nav-signin{text-align:center;margin:6px 0}.home-hero h1{font-size:41px}.home-hero-grid{gap:25px}.integration-grid{grid-template-columns:repeat(2,1fr)}.hero-photo{height:320px}.photo-hero-panel{padding:16px;margin:-25px 15px 0}.photo-audit{flex-wrap:wrap}}
 @media(max-width:750px) {.home-hero-grid,.industry-panel{grid-template-columns:1fr}.home-hero{padding:35px 0}.home-hero h1{font-size:40px}.hero-photo{height:330px}.photo-hero-card{max-width:620px}.explorer-photo{min-height:290px}.explorer-copy{padding:25px}.hero-description{font-size:16px}.section-heading h2,.story-section h2{font-size:29px}.page-intro h1{font-size:34px}.industry-tabs button{font-size:11px}.industry-art{height:240px}}
 @media(max-width:600px) {.integration-grid{grid-template-columns:1fr}.home-hero h1{font-size:36px}.home-hero-grid{gap:28px}.hero-actions>a{width:100%;text-align:center}.public-container{padding-left:20px;padding-right:20px}.hero-photo{height:265px}.photo-metrics strong{font-size:27px}.mini-telemetry strong{font-size:16px}.billing-toggle button{padding:10px 12px}.price-card{padding:25px}.popular-bar{margin:-25px -25px 0}.integration-card{padding:20px}.benefit-strip .public-container{gap:12px;justify-content:flex-start}.benefit-strip strong{font-size:12px}.footer-bottom{gap:10px}.page-intro{padding:35px 0}}
+.flight-workbench .stats > div {padding:14px;background:#F8F9FA;border:1px solid var(--border);border-radius:6px;}
+.flight-workbench .stats strong {display:block;font-size:18px;font-weight:500;font-variant-numeric:tabular-nums;}
+.flight-workbench .stats small {font-size:11px;color:var(--muted);}
+.flight-workbench details {margin-top:20px;font-size:13px;}
+.flight-workbench summary {cursor:pointer;color:var(--accent-dark);font-weight:500;}
+.flight-workbench ul {padding-left:22px;}
+.flight-workbench .checkbox-label {display:flex;align-items:flex-start;gap:10px;font-size:13px;}
+.flight-workbench .checkbox-label input {width:18px;height:18px;flex-shrink:0;margin-top:3px;accent-color:var(--accent-dark);}
+.flight-workbench .notice p {margin:10px 0;}
+.telemetry-plot {margin-top:25px;}
+.telemetry-plot svg {display:block;width:100%;height:auto;max-height:260px;}
+.telemetry-plot svg text {fill:var(--muted);font-size:12px;}
+.telemetry-plot small {color:var(--muted);font-size:11px;}
+.check-state {font-size:11px;font-weight:600;}
+.check-state.pass {color:#456c22;}.check-state.fail {color:#b3261e;}.check-state.pending {color:#8a5c00;}
+.source-hash {overflow-wrap:anywhere;font-size:11px;}
+.flight-report th {text-align:left;width:32%;font-weight:500;}
+.flight-report td {overflow-wrap:anywhere;font-size:12px;}
+.flight-workbench .form-row {align-items:start;}
+@media(max-width:600px){.flight-workbench .stats{grid-template-columns:1fr 1fr}.flight-workbench .stats strong{font-size:15px}.flight-workbench .form-row{grid-template-columns:1fr}.flight-report{padding:20px}.flight-report th{width:38%}}
+@media print {.flight-workbench .flight-report {border:0;box-shadow:none;margin:0;padding:0;width:100%}.flight-report h3{break-after:avoid}.flight-report tr{break-inside:avoid}.source-hash{font-size:9px}}

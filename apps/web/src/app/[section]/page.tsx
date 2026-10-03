@@ -50,8 +50,8 @@ const features = [
   ],
   [
     "Telemetry processing",
-    "The planned pipeline will extract flight records and reconcile them with preflight associations.",
-    "In development",
+    "Import supported .bin and .tlog files locally, review flight intervals and reconcile battery associations.",
+    "Available in the local dashboard",
   ],
   [
     "Battery health & audit evidence",

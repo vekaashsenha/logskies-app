@@ -2,6 +2,8 @@
 import { useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import QRCode from "qrcode";
+import FlightWorkbench from "@/components/flight-workbench";
 import {
   batteryStatus,
   sampleBatteries,
@@ -48,6 +50,7 @@ const tabs = [
   "Overview",
   "Batteries",
   "Preflight",
+  "Flight logs",
   "Reports",
   "Company settings",
 ] as const;
@@ -226,8 +229,8 @@ export default function Home() {
           </div>
           <div className="notice no-print">
             DEMO MODE · Records stay in this browser. Android records are
-            separate until the shared backend is connected. No flight logs have
-            been parsed.
+            separate until the shared backend is connected. Import real flight
+            logs in the Flight logs tab.
           </div>
           {message && (
             <p role="status" className="notice no-print">
@@ -248,9 +251,9 @@ export default function Home() {
                   note="Battery and drone associations"
                 />
                 <Metric
-                  label="Verified flights"
-                  value="0"
-                  note="Telemetry pipeline pending"
+                  label="Flight log processing"
+                  value="Available"
+                  note="Import .bin / .tlog under Flight logs"
                 />
                 <Metric
                   label="Audit readiness"
@@ -329,11 +332,39 @@ export default function Home() {
                               className="text-button"
                               onClick={async () => {
                                 try {
+                                  const svg = await QRCode.toString(
+                                    `logskies:battery:${b.id}`,
+                                    { type: "svg", margin: 2 },
+                                  );
+                                  const url = URL.createObjectURL(
+                                    new Blob([svg], { type: "image/svg+xml" }),
+                                  );
+                                  const anchor = document.createElement("a");
+                                  anchor.href = url;
+                                  anchor.download = "logskies-battery-qr.svg";
+                                  anchor.click();
+                                  setTimeout(
+                                    () => URL.revokeObjectURL(url),
+                                    1000,
+                                  );
+                                } catch {
+                                  setMessage(
+                                    "Unable to generate the QR label.",
+                                  );
+                                }
+                              }}
+                            >
+                              Download QR label
+                            </button>
+                            <button
+                              className="text-button"
+                              onClick={async () => {
+                                try {
                                   await navigator.clipboard.writeText(
                                     `logskies:battery:${b.id}`,
                                   );
                                   setMessage(
-                                    "QR payload copied. Printable QR labels are a later milestone.",
+                                    "QR payload copied. Use Download QR label for a printable asset.",
                                   );
                                 } catch {
                                   setMessage(
@@ -437,101 +468,28 @@ export default function Home() {
               </section>
             </div>
           )}
+          {tab === "Flight logs" && (
+            <FlightWorkbench
+              batteries={store.batteries}
+              sessions={store.sessions}
+              company={store.company}
+              logo={store.logo}
+            />
+          )}
           {tab === "Reports" && (
             <>
               <div className="actions no-print">
-                <button className="primary" onClick={() => window.print()}>
-                  Print / Save PDF
-                </button>
                 <button className="secondary" onClick={exportSessions}>
                   Export preflight CSV
                 </button>
-                <span className="muted">
-                  Draft preview · No verified flights
-                </span>
               </div>
-              <article className="report">
-                <div className="report-header">
-                  <div className="report-company">
-                    {store.logo && (
-                      <Image
-                        src={store.logo}
-                        alt={`${store.company} logo`}
-                        className="company-logo"
-                        width={120}
-                        height={70}
-                        unoptimized
-                      />
-                    )}
-                    <div>
-                      <h2>{store.company}</h2>
-                      <p>Flight and battery record pack</p>
-                    </div>
-                  </div>
-                  <div className="report-meta">
-                    DRAFT / DEMO
-                    <br />
-                    Report ID: LS-DEMO-001
-                    <br />
-                    Version: 0.1
-                  </div>
-                </div>
-                <div className="report-warning">
-                  NOT AUDIT-READY · Telemetry, pilot credentials, airspace
-                  evidence and reviewer approval are pending.
-                </div>
-                <h3>Evidence checklist</h3>
-                <table>
-                  <tbody>
-                    {[
-                      "Organization identity",
-                      "Drone UIN verification",
-                      "Pilot RPC and flight-date validity",
-                      "Flight telemetry and timestamps",
-                      "Route airspace and permission evidence",
-                      "Battery measurements",
-                      "Reviewer approval",
-                    ].map((check) => (
-                      <tr key={check}>
-                        <td>{check}</td>
-                        <td>Pending</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <h3>Preflight associations</h3>
-                {store.sessions.length ? (
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Battery</th>
-                        <th>Scan timestamp (UTC)</th>
-                        <th>Flight status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {store.sessions.map((s) => (
-                        <tr key={s.id}>
-                          <td>
-                            {
-                              store.batteries.find((b) => b.id === s.batteryId)
-                                ?.tag
-                            }
-                          </td>
-                          <td>{s.scannedAt}</td>
-                          <td>Unverified</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <p>No preflight associations recorded.</p>
-                )}
-                <footer>
-                  Prepared with LogSkies · Local demonstration · This draft does
-                  not establish regulatory compliance.
-                </footer>
-              </article>
+              <FlightWorkbench
+                reportOnly
+                batteries={store.batteries}
+                sessions={store.sessions}
+                company={store.company}
+                logo={store.logo}
+              />
             </>
           )}
           {tab === "Company settings" && (

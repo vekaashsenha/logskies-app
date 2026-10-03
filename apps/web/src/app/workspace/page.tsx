@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import QRCode from "qrcode";
@@ -21,6 +21,8 @@ const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 const client = url && key ? createClient(url, key) : null;
 export default function Workspace() {
+  const authEpoch = useRef(0);
+  const [authGeneration, setAuthGeneration] = useState(0);
   const [userId, setUserId] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [email, setEmail] = useState("");
@@ -48,7 +50,9 @@ export default function Workspace() {
   const qr = qrRecord.batteryId === batteryId ? qrRecord.url : "";
   const refresh = useCallback(async () => {
     if (!client || !orgId || !userId) return;
+    const epoch = authEpoch.current;
     const fleet = await loadFleet(client, orgId);
+    if (epoch !== authEpoch.current) return;
     setBatteries(fleet.batteries);
     setDrones(fleet.drones);
     setSessions(fleet.sessions);
@@ -59,6 +63,7 @@ export default function Workspace() {
       .eq("user_id", userId)
       .single();
     if (error) throw error;
+    if (epoch !== authEpoch.current) return;
     setCanAdmin(["owner", "admin"].includes(data.role));
   }, [orgId, userId]);
   useEffect(() => {
@@ -72,6 +77,21 @@ export default function Workspace() {
     });
     const { data } = client.auth.onAuthStateChange((_event, session) => {
       if (mounted) {
+        if (_event === "SIGNED_IN" || _event === "SIGNED_OUT") {
+          authEpoch.current++;
+          setAuthGeneration((value) => value + 1);
+          setOrgs([]);
+          setOrgId("");
+          setBatteries([]);
+          setDrones([]);
+          setSessions([]);
+          setCanAdmin(false);
+          setLogo({ path: "", url: "" });
+          setQr({ batteryId: "", url: "" });
+          setBatteryId("");
+          setDroneId("");
+          setPassword("");
+        }
         setUserId(session?.user.id ?? null);
         setReady(true);
       }
@@ -97,7 +117,7 @@ export default function Workspace() {
     return () => {
       cancelled = true;
     };
-  }, [userId]);
+  }, [userId, authGeneration]);
   useEffect(() => {
     if (!client || !orgId || !userId) return;
     let cancelled = false;
@@ -330,6 +350,7 @@ export default function Workspace() {
                 disabled={busy}
                 value={orgId}
                 onChange={(e) => {
+                  authEpoch.current++;
                   setOrgId(e.target.value);
                   setBatteryId("");
                   setDroneId("");

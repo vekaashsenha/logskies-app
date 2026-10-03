@@ -59,6 +59,8 @@ export default function ConnectedApp() {
   const [permission, requestPermission] = useCameraPermissions();
   const scanLock = useRef(false);
   const actionLock = useRef(false);
+  const authEpoch = useRef(0);
+  const [authGeneration, setAuthGeneration] = useState(0);
   useEffect(() => {
     let mounted = true;
     client.auth.getSession().then(({ data, error }) => {
@@ -70,6 +72,19 @@ export default function ConnectedApp() {
     });
     const auth = client.auth.onAuthStateChange((_event, session) => {
       if (mounted) {
+        if (_event === "SIGNED_IN" || _event === "SIGNED_OUT") {
+          authEpoch.current++;
+          setAuthGeneration((value) => value + 1);
+          setOrgs([]);
+          setOrgId("");
+          setBatteries([]);
+          setDrones([]);
+          setSessions([]);
+          setBatteryId("");
+          setDroneId("");
+          setPassword("");
+          setScanning(false);
+        }
         setUserId(session?.user.id ?? null);
         setReady(true);
       }
@@ -102,16 +117,33 @@ export default function ConnectedApp() {
     return () => {
       cancelled = true;
     };
-  }, [client, userId]);
+  }, [client, userId, authGeneration]);
   const refresh = useCallback(async () => {
     if (!orgId) return;
+    const epoch = authEpoch.current;
     const data = await loadFleet(client, orgId);
+    if (epoch !== authEpoch.current) return;
     setBatteries(data.batteries);
     setDrones(data.drones);
     setSessions(data.sessions);
   }, [client, orgId]);
   useEffect(() => {
-    if (orgId && userId) refresh().catch((e) => setMessage(errorMessage(e)));
+    let cancelled = false;
+    if (orgId && userId)
+      loadFleet(client, orgId)
+        .then((data) => {
+          if (!cancelled) {
+            setBatteries(data.batteries);
+            setDrones(data.drones);
+            setSessions(data.sessions);
+          }
+        })
+        .catch((e) => {
+          if (!cancelled) setMessage(errorMessage(e));
+        });
+    return () => {
+      cancelled = true;
+    };
   }, [orgId, userId, refresh]);
   async function run(action: () => Promise<void>) {
     if (actionLock.current) return;
@@ -223,6 +255,7 @@ export default function ConnectedApp() {
                     disabled={busy}
                     text={`${o.id === orgId ? "✓ " : ""}${o.name}`}
                     onPress={() => {
+                      authEpoch.current++;
                       setOrgId(o.id);
                       setBatteries([]);
                       setDrones([]);

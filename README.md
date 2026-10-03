@@ -20,7 +20,7 @@ From the repository root:
 
 ### Web
 
-`/` is the public homepage; `/solutions`, `/features`, `/pricing`, `/faq`, and `/contact` share its design. `/dashboard` is a local demo: battery inventory, adding packs, preflight sessions, company name/logo settings, printable branded draft reports and preflight CSV export. It saves data only in this browser.
+`/` is the public homepage; `/solutions`, `/features`, `/pricing`, `/faq`, and `/contact` share its design. `/dashboard` includes local battery inventory, preflight sessions, company settings, supported DataFlash/MAVLink import, battery matching and qualified health estimates. Flight originals, observations and reviews persist in IndexedDB in this browser. Branded draft reports include UTC/IST times, coordinates, evidence checks, CSV/JSON export and Print / Save PDF. See [flight processing](docs/FLIGHT-PROCESSING.md).
 
 `/workspace` is the Supabase-connected implementation: email signup/login, organization creation, battery/drone registration, downloadable QR labels, shared preflight records and private logo uploads for branded draft reports. It requires project configuration and the applied migration.
 
@@ -34,7 +34,7 @@ First release is online-only. Device-local demo history is not offline synchroni
 
 Shared packages provide domain types, conservative missing-telemetry behavior, unambiguous timestamp matching, CSV escaping and Supabase fleet operations.
 
-The draft migration provides organization bootstrap, membership RLS, organization-consistent asset foreign keys and private storage buckets. It has not been executed or isolation-tested against a hosted project.
+The draft migration provides organization bootstrap, membership RLS, organization-consistent asset foreign keys and private storage buckets. Automated embedded PostgreSQL tests exercise its tenant isolation and unauthorized writes. Hosted Supabase authentication/storage integration remains untested.
 
 ## Connect Supabase
 
@@ -46,10 +46,10 @@ First connected milestone: create your organization/battery/drone on web, scan t
 
 - Hosted Supabase setup, migration execution and organization/role/storage isolation tests.
 - Team invitations and membership administration.
-- Telemetry uploads, parsing, background jobs, flight segmentation and evidence tracking.
-- Calibrated battery health calculations and retirement workflow.
+- Shared cloud flight storage, server processing/background jobs and Android flight report access. Current processing and flight history are browser-local.
+- Validation against customer telemetry, calibrated battery baselines and retirement workflow.
 - Verified DGCA export templates, authoritative airspace data, route/altitude/pilot checks and reviewer approval.
-- Server-generated PDF/Excel and Android report download. Current web PDF uses browser Print / Save PDF; demo CSV contains preflight associations only.
+- Server-generated PDF/Excel and Android report download. Current web PDF uses browser Print / Save PDF; local flight CSV and preflight CSV are available.
 - Subscriptions, production deployment, Android device tests, release icons and Play Store preparation.
 
 Reports are deliberately marked draft/unverified. This increment does not establish airworthiness or DGCA compliance.
