@@ -2,6 +2,8 @@
 
 Passed:
 
+- Hosted Supabase foundation migration applied: eight RLS-enabled tables and two private buckets. REST smoke checks passed for anonymous table reads, denied organization creation, no private bucket listing, and email login with confirmation required. Web/Android ignored environment files target the same project.
+
 - Marketing content refresh: removed integration abbreviation tiles, updated compatibility/FAQ/features/pricing/privacy copy to match local capabilities, and verified the shared CTA kicker is white on its darker green background. FAQ expansion and 390 px layout checked; web lint and production build passed.
 
 - Combined automated tests: 15/15 (domain, telemetry, health, airspace geometry and PostgreSQL migration isolation).
@@ -18,7 +20,7 @@ Passed:
 
 Not verified:
 
-- Hosted Supabase migration execution, real authentication, cross-device records and Storage endpoints. Local PostgreSQL isolation tests passed; hosted integration still needs configuration.
+- Authenticated hosted user/organization isolation, private file uploads and cross-device records. Schema and anonymous endpoint checks passed; application signup/sign-in and Android device tests remain pending.
 - Camera scanning/native permissions on an Android device; bundle export is not an APK/device test.
 - Actual PDF pagination and hosted report generation.
 - Independent customer MAVLink logs, real battery calibration, and hosted shared flight processing.

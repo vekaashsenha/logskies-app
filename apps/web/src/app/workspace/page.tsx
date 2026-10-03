@@ -197,7 +197,11 @@ export default function Workspace() {
     if (!client) return;
     await run(async () => {
       const result = signup
-        ? await client!.auth.signUp({ email: email.trim(), password })
+        ? await client!.auth.signUp({
+            email: email.trim(),
+            password,
+            options: { emailRedirectTo: window.location.origin + "/workspace" },
+          })
         : await client!.auth.signInWithPassword({
             email: email.trim(),
             password,

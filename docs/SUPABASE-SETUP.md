@@ -14,4 +14,12 @@ First release: online-only web and Android, sharing one Supabase project.
 
 Before production, test separate users/organizations, pilot write restrictions, membership escalation attempts, foreign-organization asset references and storage isolation. Invitation management, telemetry processing and regulatory report verification remain pending.
 
-The app is not currently connected to a hosted Supabase project. The migration is drafted but not yet executed or integration-tested.
+## Current setup — 3 October 2026
+
+The `logskies-app` project has been created in Tokyo (`ap-northeast-1`) and the foundation migration applied successfully. All eight public tables have RLS enabled; `company-logos` and `flight-logs` buckets are private. Both local apps are configured with the same project URL and publishable key in ignored environment files. No database password or privileged server key is included in either app.
+
+Hosted REST checks confirm anonymous reads return no records across all eight tables, anonymous organization creation is denied, and private buckets are not listed anonymously. Email login is enabled with email confirmation required. Local web signup returns to `http://localhost:3000/workspace`, which is allow-listed. Production hosting must supply its own environment configuration and exact HTTPS redirect URL.
+
+Run `node scripts/check-supabase.mjs` from the repository root to repeat the endpoint checks (network access required). It does not create users or print keys. Create and confirm an application account via `/workspace` to continue authenticated organization/fleet/private-logo and Android device tests. The Supabase dashboard account is separate from the LogSkies application account.
+
+Flight import and report history in `/dashboard` still remain browser-local. Configuring Supabase activates the existing shared fleet/preflight workspace; it does not automatically move those flight records to the cloud.

@@ -34,7 +34,7 @@ First release is online-only. Device-local demo history is not offline synchroni
 
 Shared packages provide domain types, conservative missing-telemetry behavior, unambiguous timestamp matching, CSV escaping and Supabase fleet operations.
 
-The draft migration provides organization bootstrap, membership RLS, organization-consistent asset foreign keys and private storage buckets. Automated embedded PostgreSQL tests exercise its tenant isolation and unauthorized writes. Hosted Supabase authentication/storage integration remains untested.
+The foundation migration provides organization bootstrap, membership RLS, organization-consistent asset foreign keys and private storage buckets. It is now applied to the hosted project. Embedded PostgreSQL isolation tests and hosted anonymous REST/Auth/Storage checks pass; authenticated user and cross-device validation still require application sign-in.
 
 ## Connect Supabase
 
@@ -44,7 +44,7 @@ First connected milestone: create your organization/battery/drone on web, scan t
 
 ## Still required for the complete MVP
 
-- Hosted Supabase setup, migration execution and organization/role/storage isolation tests.
+- Authenticated hosted organization/role/storage isolation and cross-device tests. Project setup, schema execution and anonymous endpoint checks are complete.
 - Team invitations and membership administration.
 - Shared cloud flight storage, server processing/background jobs and Android flight report access. Current processing and flight history are browser-local.
 - Validation against customer telemetry, calibrated battery baselines and retirement workflow.
