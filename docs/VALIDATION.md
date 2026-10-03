@@ -2,6 +2,8 @@
 
 Passed:
 
+- Payment-link preparation: distinct Starter/Pro monthly/annual destinations, HTTPS validation and credential-bearing URL rejection checked. With no merchant URLs configured, pricing retains the launch-contact fallback. Web lint/build passed. No live payment or merchant activation tested yet.
+
 - Hosted Supabase foundation migration applied: eight RLS-enabled tables and two private buckets. REST smoke checks passed for anonymous table reads, denied organization creation, no private bucket listing, and email login with confirmation required. Web/Android ignored environment files target the same project.
 
 - Marketing content refresh: removed integration abbreviation tiles, updated compatibility/FAQ/features/pricing/privacy copy to match local capabilities, and verified the shared CTA kicker is white on its darker green background. FAQ expansion and 390 px layout checked; web lint and production build passed.

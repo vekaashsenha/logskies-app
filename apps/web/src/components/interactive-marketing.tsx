@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { IndustryArt, industries } from "./marketing";
+import { hasPaymentLinks, paymentLink } from "@/lib/payment-links";
 
 const telemetry = [
   ["Pack health", "94%", "Cell delta", "0.02 V", "Cycles", "82"],
@@ -267,8 +268,9 @@ export function PricingMatrix() {
         </button>
       </div>
       <p className="pricing-note">
-        Proposed launch pricing. Trial enrollment, checkout and UPI AutoPay are
-        not active yet. Taxes and final limits to be confirmed.
+        {hasPaymentLinks()
+          ? "Checkout opens with the payment provider. Confirm the plan, billing period and final amount before paying. Account activation requires payment verification; UPI AutoPay is not enabled."
+          : "Proposed launch pricing. Trial enrollment, checkout and UPI AutoPay are not active yet. Taxes and final limits to be confirmed."}
       </p>
       <div className="pricing-grid">
         {[
@@ -305,39 +307,62 @@ export function PricingMatrix() {
               "Requirements and rollout planning",
             ],
           },
-        ].map((plan, i) => (
-          <article
-            key={plan.name}
-            className={`public-card price-card ${i === 1 ? "featured-plan" : ""}`}
-          >
-            {i === 1 && (
-              <div className="popular-bar">Most Popular · Proposed plan</div>
-            )}
-            <h3>{plan.name}</h3>
-            <h2>
-              {plan.price
-                ? `₹${(plan.price * (annual ? 0.8 : 1)).toLocaleString("en-IN", { minimumFractionDigits: annual ? 2 : 0, maximumFractionDigits: 2 })}`
-                : "Custom"}
-              {plan.price > 0 && <small>/ month</small>}
-            </h2>
-            <p className="billing-detail">
-              {plan.price
-                ? annual
-                  ? `₹${(plan.price * 0.8 * 12).toLocaleString("en-IN", { minimumFractionDigits: annual ? 2 : 0, maximumFractionDigits: 2 })} billed annually`
-                  : "Billed monthly"
-                : "Let’s discuss your fleet"}
-            </p>
-            <p>{plan.description}</p>
-            <ul className="check-list">
-              {plan.items.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-            <Link href="/contact" className={i === 1 ? "primary" : "secondary"}>
-              {i === 2 ? "Contact our team" : "Request launch access"} →
-            </Link>
-          </article>
-        ))}
+        ].map((plan, i) => {
+          const checkout =
+            i < 2
+              ? paymentLink(
+                  i === 0 ? "starter" : "pro",
+                  annual ? "annual" : "monthly",
+                )
+              : null;
+          return (
+            <article
+              key={plan.name}
+              className={`public-card price-card ${i === 1 ? "featured-plan" : ""}`}
+            >
+              {i === 1 && (
+                <div className="popular-bar">Most Popular · Proposed plan</div>
+              )}
+              <h3>{plan.name}</h3>
+              <h2>
+                {plan.price
+                  ? `₹${(plan.price * (annual ? 0.8 : 1)).toLocaleString("en-IN", { minimumFractionDigits: annual ? 2 : 0, maximumFractionDigits: 2 })}`
+                  : "Custom"}
+                {plan.price > 0 && <small>/ month</small>}
+              </h2>
+              <p className="billing-detail">
+                {plan.price
+                  ? annual
+                    ? `₹${(plan.price * 0.8 * 12).toLocaleString("en-IN", { minimumFractionDigits: annual ? 2 : 0, maximumFractionDigits: 2 })} billed annually`
+                    : "Billed monthly"
+                  : "Let’s discuss your fleet"}
+              </p>
+              <p>{plan.description}</p>
+              <ul className="check-list">
+                {plan.items.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              {checkout ? (
+                <a
+                  href={checkout}
+                  className={i === 1 ? "primary" : "secondary"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Continue to payment →
+                </a>
+              ) : (
+                <Link
+                  href="/contact"
+                  className={i === 1 ? "primary" : "secondary"}
+                >
+                  {i === 2 ? "Contact our team" : "Request launch access"} →
+                </Link>
+              )}
+            </article>
+          );
+        })}
       </div>
       <div className="section-heading matrix-heading">
         <h2>Compare your fleet options.</h2>
