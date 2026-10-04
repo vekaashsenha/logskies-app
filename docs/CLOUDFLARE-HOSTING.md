@@ -17,6 +17,10 @@ After deployment, add the actual HTTPS `/workspace` URL to Supabase Auth redirec
 
 ## Release verification
 
+Live early-access URL: `https://logskies-app.pages.dev`. Git builds deploy automatically. On 4 October all 15 public/app route URLs returned HTTP 200; an unknown route returned 404. The expected Pages security headers were present. Supabase production Site URL and exact workspace redirect are configured for this origin. `logskies.com` zone setup is awaiting registrar nameserver activation and Pages domain connection.
+
+Customer signup blocker: custom SMTP is disabled in the hosted project. Supabase's default sender is restricted to project-team addresses. Configure a production sender and verify confirmation delivery to a non-team address before public account onboarding. Keep email confirmation enabled. The project owner's existing account can still sign in. See [Supabase SMTP documentation](https://supabase.com/docs/guides/auth/auth-smtp).
+
 Check direct navigation/reload on `/workspace`, `/solutions`, `/faq` and knowledge articles; signup confirmation and login; organization data and private company logo after reload; page width on mobile; file downloads and Print / Save PDF. Test a separate user and organization against the hosted policies before unrestricted customer onboarding.
 
 Local checks on 4 October 2026: static production export succeeds (18 generated pages); all 15 domain/telemetry/PostgreSQL policy tests pass. Authenticated web fleet/preflight persistence and the user's company logo loading after reload are verified.

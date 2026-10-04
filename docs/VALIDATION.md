@@ -2,6 +2,20 @@
 
 ## Authenticated Supabase workspace — 4 October 2026
 
+## Cloudflare early-access deployment — 4 October 2026
+
+- Cloudflare Pages project `logskies-app` is deployed from GitHub `main`; static Linux build succeeds after explicitly including Tailwind's matching Linux binding.
+- Live origin: `https://logskies-app.pages.dev`. All 15 public/app route URLs return 200; an unknown route returns 404. Frame/MIME/browser-permission response headers are present.
+- Live homepage has no broken loaded images or horizontal overflow at 1280 px (document width 1265 px). Evidence: `qa/cloudflare-live-home.png`.
+- All 15 tests, web lint, static production build and Android TypeScript check passed.
+- Hosted transactional SQL checks passed for owner bootstrap, pilot reads/write restrictions, membership escalation denial, outsider organization/fleet/membership and private-logo isolation. Test fixtures rolled back; evidence: `qa/hosted-rls-pass.png`.
+- Production Supabase Site URL and exact `/workspace` confirmation redirect configured. Hosted account sign-in verification requires user login on the new origin.
+- Custom domain is not yet active: Cloudflare zone imported parking A/CNAME plus five email MX records and SPF. Assigned nameservers are `fatima.ns.cloudflare.com` and `zahir.ns.cloudflare.com`. Namecheap change is prepared but unsaved, pending full registrar record/contact verification. Existing registrar email forwarding has no configured recipients.
+- Custom SMTP is disabled. External customer confirmation delivery is a release blocker; Resend setup requires the user's account/credential actions. Full public privacy/contact policy details also need the user's business email and retention/deletion decisions.
+- Cloud flight sync, validated DGCA/eGCA templates, actual PDF pagination, Android device testing and payments remain incomplete.
+
+### Previous authenticated workspace verification
+
 Application sign-in and the user's `DRONE Farm` organization were verified. Explicitly labelled synthetic `TEST-INTEGRATION-PACK` (16000 mAh, unassessed) and `TEST-INTEGRATION-DRONE` (no UIN) records and one preflight association were saved through the connected UI. The authenticated session, organization, assets and preflight timestamp persisted after a full reload. Screenshot: `qa/supabase-authenticated-workspace.png`.
 
 Private logo uploads, hosted multi-user isolation, Android device sharing and cloud flight processing remain pending. Reports remain drafts. Earlier dated sign-in/push status below is historical and superseded by this verification and subsequent Git commits.
