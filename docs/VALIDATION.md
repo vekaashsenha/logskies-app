@@ -1,5 +1,11 @@
 # Validation — 3 October 2026
 
+## Authenticated Supabase workspace — 4 October 2026
+
+Application sign-in and the user's `DRONE Farm` organization were verified. Explicitly labelled synthetic `TEST-INTEGRATION-PACK` (16000 mAh, unassessed) and `TEST-INTEGRATION-DRONE` (no UIN) records and one preflight association were saved through the connected UI. The authenticated session, organization, assets and preflight timestamp persisted after a full reload. Screenshot: `qa/supabase-authenticated-workspace.png`.
+
+Private logo uploads, hosted multi-user isolation, Android device sharing and cloud flight processing remain pending. Reports remain drafts. Earlier dated sign-in/push status below is historical and superseded by this verification and subsequent Git commits.
+
 Passed:
 
 - Payment-link preparation: distinct Starter/Pro monthly/annual destinations, HTTPS validation and credential-bearing URL rejection checked. With no merchant URLs configured, pricing retains the launch-contact fallback. Web lint/build passed. No live payment or merchant activation tested yet.

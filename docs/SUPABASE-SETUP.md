@@ -23,3 +23,9 @@ Hosted REST checks confirm anonymous reads return no records across all eight ta
 Run `node scripts/check-supabase.mjs` from the repository root to repeat the endpoint checks (network access required). It does not create users or print keys. Create and confirm an application account via `/workspace` to continue authenticated organization/fleet/private-logo and Android device tests. The Supabase dashboard account is separate from the LogSkies application account.
 
 Flight import and report history in `/dashboard` still remain browser-local. Configuring Supabase activates the existing shared fleet/preflight workspace; it does not automatically move those flight records to the cloud.
+
+## Authenticated verification — 4 October 2026
+
+The application account is confirmed and signed in. The user's `DRONE Farm` organization loads successfully. Clearly labelled synthetic battery and drone records and one preflight association were saved through the connected workspace and persisted after a full reload, along with the authenticated session. Screenshot: `qa/supabase-authenticated-workspace.png`.
+
+Private company-logo upload, hosted multi-user role/isolation checks and Android device/cross-device verification remain pending. Local migration security tests do not replace hosted checks.
