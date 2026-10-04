@@ -11,11 +11,11 @@
   "dependencies": {
     "@logskies/api": "*",
     "@logskies/domain": "*",
+    "@logskies/telemetry": "*",
     "next": "16.3.8",
     "qrcode": "^1.5.4",
     "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "@logskies/telemetry": "*"
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -27,5 +27,8 @@
     "eslint-config-next": "16.3.8",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "optionalDependencies": {
+    "@tailwindcss/oxide-linux-x64-gnu": "4.3.3"
   }
 }
