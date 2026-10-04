@@ -5,6 +5,8 @@ Build profile: `preview`, internal APK, public Supabase configuration in the pro
 
 Initial build: https://expo.dev/accounts/vekaashsenhas-team/projects/logskies/builds/402c89c6-9c4d-410f-a0e4-e0a316310af0
 
+Next preview submitted from commit 69f64d4: https://expo.dev/accounts/vekaashsenhas-team/projects/logskies/builds/2c095009-0f40-47a8-a519-e0b973d62fca . Includes reset-email action, web account-creation and current FAQ links. Submission is not a finished APK; inspect build status before installation.
+
 Build status verified FINISHED on 4 October 2026. APK: https://expo.dev/artifacts/eas/I5Yfrg-Iqw1NU1sFWN7UPxzzTBFcaJguIj2KI_uzbbQ.apk
 
 TypeScript and Expo lint pass. The user confirmed successful Android sign-in, web preflight synchronization, shared flight-history access and opening web reports on 4 October 2026. Phone model/Android version, camera QR scanning, session persistence/logout and network-failure behavior still need verification.
