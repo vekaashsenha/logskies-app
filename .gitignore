@@ -7,3 +7,5 @@ dist/
 *.tsbuildinfo
 dist-check/
 out/
+docs/qa/expo-account-setup.png
+docs/qa/expo-cli-authorization.png

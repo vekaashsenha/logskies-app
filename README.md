@@ -44,6 +44,8 @@ See [setup instructions](docs/SUPABASE-SETUP.md). Use the same project for both 
 
 First connected milestone: create your organization/battery/drone on web, scan the downloaded battery QR on Android, save an online preflight session and refresh web to see it.
 
+Android preview setup and the real-phone verification checklist are in [Android testing](docs/ANDROID-TESTING.md). Expo project and preview Supabase variables are configured; a cloud APK build has been submitted. Device testing is not complete.
+
 ## Still required for the complete MVP
 
 - Authenticated hosted organization/role/storage isolation and cross-device tests. Project setup, schema execution and anonymous endpoint checks are complete.
