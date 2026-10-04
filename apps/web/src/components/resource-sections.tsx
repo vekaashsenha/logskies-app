@@ -147,6 +147,10 @@ export function KnowledgeHub() {
 }
 export const faqs = [
   [
+    "How do I reset my password on web or Android?",
+    "Enter your account email on the sign-in screen and select Forgot password. Open the reset email in your browser, choose and confirm a new password, then use it on both web and Android. The reset action is included in the next Android preview; older APKs can use the website sign-in screen. Never share your password or reset link.",
+  ],
+  [
     "What can I use in the online workspace today?",
     "Create and confirm an account, create your organization, register batteries and drones, download battery QR labels, save preflight associations and upload your company logo. These records are stored in Supabase and persist after reload. The Android preview shares these records; sign-in, preflight sync and flight-history access have been checked on a test device. Owners and admins can import supported flight logs into private shared history, review evidence and export branded Flight Operations Reports.",
   ],

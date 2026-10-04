@@ -1,6 +1,19 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 export { createClient };
 export type { SupabaseClient };
+export async function requestPasswordReset(
+  client: SupabaseClient,
+  email: string,
+  redirectTo: string,
+) {
+  const address = email.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address))
+    throw new Error("Enter a valid email address first.");
+  const { error } = await client.auth.resetPasswordForEmail(address, {
+    redirectTo,
+  });
+  if (error) throw error;
+}
 export type Org = {
   id: string;
   name: string;

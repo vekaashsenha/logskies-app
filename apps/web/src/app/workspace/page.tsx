@@ -14,6 +14,7 @@ import {
   addDrone,
   savePreflight,
   errorMessage,
+  requestPasswordReset,
   type Org,
   type FleetBattery,
   type FleetDrone,
@@ -29,6 +30,8 @@ export default function Workspace() {
   const [ready, setReady] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [recovering, setRecovering] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [orgs, setOrgs] = useState<Org[]>([]);
   const [orgId, setOrgId] = useState("");
   const [orgName, setOrgName] = useState("");
@@ -81,10 +84,23 @@ export default function Workspace() {
       if (!mounted) return;
       if (error) setMessage(error.message);
       setUserId(data.session?.user.id ?? null);
+      if (
+        data.session &&
+        sessionStorage.getItem("logskies-password-recovery") === "1"
+      )
+        setRecovering(true);
       setReady(true);
     });
     const { data } = client.auth.onAuthStateChange((_event, session) => {
       if (mounted) {
+        if (_event === "PASSWORD_RECOVERY") {
+          sessionStorage.setItem("logskies-password-recovery", "1");
+          setRecovering(true);
+        }
+        if (_event === "SIGNED_OUT") {
+          sessionStorage.removeItem("logskies-password-recovery");
+          setRecovering(false);
+        }
         if (_event === "SIGNED_IN" || _event === "SIGNED_OUT") {
           authEpoch.current++;
           setAuthGeneration((value) => value + 1);
@@ -268,6 +284,61 @@ export default function Workspace() {
         <p>Loading account…</p>
       </main>
     );
+  if (recovering && userId)
+    return (
+      <main className="content">
+        <h1>Set a new password</h1>
+        <form
+          className="panel form-grid"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void run(async () => {
+              if (password.length < 8)
+                throw new Error("Use at least 8 characters.");
+              if (password !== confirmPassword)
+                throw new Error("Passwords do not match.");
+              const { error } = await client.auth.updateUser({ password });
+              if (error) throw error;
+              setPassword("");
+              setConfirmPassword("");
+              sessionStorage.removeItem("logskies-password-recovery");
+              setRecovering(false);
+              setMessage(
+                "Password updated. Use your new password on web and Android.",
+              );
+            });
+          }}
+        >
+          <p>Choose a password for your shared LogSkies account.</p>
+          <label>
+            New password
+            <input
+              required
+              minLength={8}
+              type="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
+          <label>
+            Confirm new password
+            <input
+              required
+              minLength={8}
+              type="password"
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </label>
+          <button className="primary" disabled={busy}>
+            {busy ? "Updating…" : "Update password"}
+          </button>
+          {message && <p role="status">{message}</p>}
+        </form>
+      </main>
+    );
   if (!userId)
     return (
       <main className="content">
@@ -313,6 +384,25 @@ export default function Workspace() {
             Create account
           </button>
           {message && <p role="status">{message}</p>}
+          <button
+            type="button"
+            className="text-button"
+            disabled={busy || !email.trim()}
+            onClick={() =>
+              void run(async () => {
+                await requestPasswordReset(
+                  client,
+                  email,
+                  window.location.origin + "/workspace",
+                );
+                setMessage(
+                  "If an account exists for this email, a password reset link will be sent. Open it to choose a new password, then use it on web and Android.",
+                );
+              })
+            }
+          >
+            Forgot password? Send reset email
+          </button>
           <Link href="/dashboard" className="text-button">
             Open local demo
           </Link>

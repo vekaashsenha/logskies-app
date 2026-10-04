@@ -24,6 +24,6 @@ Desktop: solutions, features, integrations, reports, pricing, knowledge hub, FAQ
 4. Finish Android QR-camera/manual fallback, session/logout and network-failure tests; record device model/version. Launcher branding, release AAB and Play Store work remain pending.
 5. Before charging, configure payment verification, subscriptions, final plan limits and customer terms. Payments remain paused.
 6. Establish an operational backup/restore and support process before broad customer onboarding. Existing tenant isolation checks pass, but no restore exercise is claimed.
-7. Add and validate the customer password-recovery workflow; the current login page has sign-in and signup only.
+7. Password recovery is implemented in shared API, web and the next Android preview. Email-link delivery, password change and subsequent login on both platforms still require the user to test; no customer password was changed by the agent.
 
 Synthetic test records remain labeled; no customer data was deleted during this review.

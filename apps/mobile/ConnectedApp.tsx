@@ -21,6 +21,7 @@ import {
   loadFleet,
   savePreflight,
   errorMessage,
+  requestPasswordReset,
   listFlightSummaries,
   type FlightSummary,
   type Org,
@@ -256,6 +257,40 @@ export default function ConnectedApp() {
             <Text style={s.muted}>
               Create your account and organization in the web workspace first.
             </Text>
+            <Button
+              disabled={busy || !email.trim()}
+              text="Forgot password? Send reset email"
+              onPress={() =>
+                void run(async () => {
+                  await requestPasswordReset(
+                    client,
+                    email,
+                    "https://logskies.com/workspace",
+                  );
+                  setMessage(
+                    "If an account exists for this email, a reset link will be sent. Open it in your browser, choose a new password, then return here to sign in.",
+                  );
+                })
+              }
+            />
+            <Button
+              disabled={busy}
+              text="Create account on web"
+              onPress={() =>
+                void run(async () => {
+                  await Linking.openURL("https://logskies.com/workspace");
+                })
+              }
+            />
+            <Button
+              disabled={busy}
+              text="Help & FAQ"
+              onPress={() =>
+                void run(async () => {
+                  await Linking.openURL("https://logskies.com/faq");
+                })
+              }
+            />
           </View>
         ) : (
           <>
