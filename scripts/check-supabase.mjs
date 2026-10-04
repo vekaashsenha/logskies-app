@@ -50,6 +50,25 @@ const bootstrap = await request("/rest/v1/rpc/create_organization", {
   method: "POST",
   body: JSON.stringify({ org_name: "Anonymous access probe" }),
 });
+const imports = await request("/rest/v1/flight_imports?select=id&limit=1");
+assert.ok(
+  [200, 401, 403].includes(imports.status),
+  "Flight imports endpoint unavailable",
+);
+if (imports.status === 200)
+  assert.deepEqual(imports.body, [], "Anonymous flight evidence exposure");
+const saveImport = await request("/rest/v1/rpc/save_flight_imports", {
+  method: "POST",
+  body: JSON.stringify({
+    target_org: "00000000-0000-4000-8000-000000000000",
+    records: [],
+  }),
+});
+assert.ok(
+  [401, 403].includes(saveImport.status),
+  "Anonymous import writes were not denied",
+);
+console.log("PASS anonymous flight import reads/writes denied");
 assert.ok(
   [401, 403].includes(bootstrap.status),
   "Anonymous organization creation was not denied",

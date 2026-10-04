@@ -449,6 +449,34 @@ export default function FlightWorkbench({
       )}
       <section className="panel no-print">
         <h2>Flight record history</h2>
+        <button
+          className="secondary"
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            try {
+              const items = await store.listFlights();
+              const current =
+                items.find((item) => item.id === selected) ?? items[0] ?? null;
+              setRecords(items);
+              setSelected(current?.id ?? "");
+              setDraft(current);
+              setMessage(
+                "Saved flight history refreshed. Unsaved edits were discarded.",
+              );
+            } catch (error) {
+              setMessage(
+                error instanceof Error
+                  ? error.message
+                  : "History refresh failed.",
+              );
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          Refresh saved flight history
+        </button>
         {records.length ? (
           <label>
             Select a saved interval

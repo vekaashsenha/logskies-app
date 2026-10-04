@@ -2,6 +2,8 @@
 
 First release: online-only web and Android, sharing one Supabase project.
 
+Current production authentication: Site URL `https://logskies.com`; exact redirects `https://logskies.com/workspace` and `https://www.logskies.com/workspace`, plus Pages and local testing. Resend custom SMTP is enabled; the user confirmed email delivery and login. Shared imported flight records use the second migration described below. These supersede earlier setup status in this document.
+
 1. Sign in or create your own account at https://supabase.com/dashboard. Complete any terms acceptance yourself.
 2. Create a project named LogSkies in an organization you control. Choose the Mumbai region if available. Select your intended plan; do not enable paid extras unless desired. Enter/store the database password yourself.
 3. In SQL Editor, run `supabase/migrations/202610030001_foundation.sql` against the fresh project. Do not run on an existing production database without review.

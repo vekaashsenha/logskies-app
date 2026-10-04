@@ -1,6 +1,6 @@
 # Cloudflare hosting
 
-The current web application supports a Next.js static export. Supabase authentication, fleet data and private logo retrieval run in the browser. Cloudflare Pages serves the exported assets. Cloud flight processing and server-generated reports require a separately deployed backend in a later increment.
+The current web application supports a Next.js static export. Supabase authentication, fleet data and private logo retrieval run in the browser. Cloudflare Pages serves the exported assets. Private original logs and imported reviews are now saved to Supabase; parsing runs in a browser worker. Server background processing and server-generated PDFs remain later increments.
 
 ## Git deployment
 
@@ -17,9 +17,11 @@ After deployment, add the actual HTTPS `/workspace` URL to Supabase Auth redirec
 
 ## Release verification
 
-Live early-access URL: `https://logskies-app.pages.dev`. Git builds deploy automatically. On 4 October all 15 public/app route URLs returned HTTP 200; an unknown route returned 404. The expected Pages security headers were present. Supabase production Site URL and exact workspace redirect are configured for this origin. `logskies.com` and `www.logskies.com` are registered as Pages custom domains. Namecheap custom nameservers are saved as `fatima.ns.cloudflare.com` and `zahir.ns.cloudflare.com`; existing MX/SPF records were preserved. Cloudflare activation and custom-domain HTTPS remain pending verification.
+Live early-access URL: `https://logskies.com`, also available at `https://logskies-app.pages.dev`. Git builds deploy automatically. All 15 public/app routes returned HTTP 200; an unknown route returned 404. The expected Pages security headers were present. Both apex and www workspace HTTPS endpoints return 200. Namecheap nameservers are saved as `fatima.ns.cloudflare.com` and `zahir.ns.cloudflare.com`; existing MX/SPF records were preserved.
 
-Customer signup blocker: the Resend domain `auth.logskies.com` is verified, with DKIM and both routing CNAME records published as DNS-only. The Supabase SMTP form is prepared for `smtp.resend.com:465`, username `resend`, sender `no-reply@auth.logskies.com` (LogSkies), but has not been saved. The owner must create the prepared sending-only, domain-scoped key and enter it directly into the SMTP password field. No secret belongs in this repository. Supabase's default sender is restricted to project-team addresses. Configure a production sender and verify confirmation delivery to a non-team address before public account onboarding. Keep email confirmation enabled. The project owner's existing account can still sign in. See [Supabase SMTP documentation](https://supabase.com/docs/guides/auth/auth-smtp).
+Email sender: Resend `auth.logskies.com` is verified and custom SMTP is enabled. The owner entered the credential directly; no secret belongs in this repository. The user confirmed receiving a LogSkies signup email, confirmation, login and fleet persistence. Keep email confirmation enabled. See [Supabase SMTP documentation](https://supabase.com/docs/guides/auth/auth-smtp).
+
+Current domain verification: both `https://logskies.com/workspace` and `https://www.logskies.com/workspace` return HTTP 200 over HTTPS. Supabase Site URL is `https://logskies.com` with exact apex/www workspace redirects, plus Pages and localhost testing redirects. This supersedes the pending-domain status recorded above.
 
 Check direct navigation/reload on `/workspace`, `/solutions`, `/faq` and knowledge articles; signup confirmation and login; organization data and private company logo after reload; page width on mobile; file downloads and Print / Save PDF. Test a separate user and organization against the hosted policies before unrestricted customer onboarding.
 

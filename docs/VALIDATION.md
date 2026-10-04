@@ -1,4 +1,6 @@
-# Validation — 3 October 2026
+# Validation — updated 4 October 2026
+
+Current status supersedes historical entries below: apex/www custom-domain HTTPS works; custom SMTP is enabled and the user confirmed signup email delivery, confirmation, login and fleet persistence. Private flight originals and imported reviews are connected to Supabase. Hosted anonymous flight-import read/write probes pass. Android preview APK build is running; real-device testing and PDF download/pagination remain unverified.
 
 ## Authenticated Supabase workspace — 4 October 2026
 
@@ -10,9 +12,9 @@
 - All 15 tests, web lint, static production build and Android TypeScript check passed.
 - Hosted transactional SQL checks passed for owner bootstrap, pilot reads/write restrictions, membership escalation denial, outsider organization/fleet/membership and private-logo isolation. Test fixtures rolled back; evidence: `qa/hosted-rls-pass.png`.
 - Production Supabase Site URL and exact `/workspace` confirmation redirect configured. Hosted account sign-in verification requires user login on the new origin.
-- Custom domain is not yet active: Cloudflare zone imported parking A/CNAME plus five email MX records and SPF. Assigned nameservers are `fatima.ns.cloudflare.com` and `zahir.ns.cloudflare.com`. Namecheap change is prepared but unsaved, pending full registrar record/contact verification. Existing registrar email forwarding has no configured recipients.
-- Custom SMTP is disabled. External customer confirmation delivery is a release blocker; Resend setup requires the user's account/credential actions. Full public privacy/contact policy details also need the user's business email and retention/deletion decisions.
-- Cloud flight sync, validated DGCA/eGCA templates, actual PDF pagination, Android device testing and payments remain incomplete.
+- Custom domain is active: apex and www workspace HTTPS endpoints return 200. Nameservers are saved at Namecheap; existing MX/SPF records were preserved. Registrar contact verification remains the owner's responsibility.
+- Custom SMTP is enabled; the user confirmed signup email delivery, confirmation and login. Public support/privacy email and retention/deletion decisions still require owner input.
+- Private shared flight history is connected. Validated DGCA/eGCA templates, actual PDF pagination, Android device testing and payments remain incomplete.
 
 ### Previous authenticated workspace verification
 
