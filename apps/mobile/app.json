@@ -32,6 +32,12 @@
       ],
       "expo-router"
     ],
-    "scheme": "logskies"
+    "scheme": "logskies",
+    "owner": "vekaashsenhas-team",
+    "extra": {
+      "eas": {
+        "projectId": "663836c4-bbbd-46e8-9519-609afdeef598"
+      }
+    }
   }
 }

@@ -7,6 +7,7 @@ import {
   matchSession,
   type Battery,
   type Session,
+  type Drone,
 } from "@logskies/domain";
 import type { ParsedLog } from "@logskies/telemetry";
 import { estimateHealth } from "@logskies/telemetry/health";
@@ -23,6 +24,8 @@ import {
 } from "@/lib/flight-storage";
 import AirspaceReview from "./airspace-review";
 const droneIdentity = "demo-drone-01";
+const localStore = { listFlights, saveFlights, readSource };
+export type FlightStore = typeof localStore;
 function download(data: Blob, filename: string) {
   const trigger = (url: string) => {
     const anchor = document.createElement("a");
@@ -59,12 +62,18 @@ export default function FlightWorkbench({
   company,
   logo,
   reportOnly = false,
+  store = localStore,
+  drones,
+  canEdit = true,
 }: {
   batteries: Battery[];
   sessions: Session[];
   company: string;
   logo: string;
   reportOnly?: boolean;
+  store?: FlightStore;
+  drones?: Drone[];
+  canEdit?: boolean;
 }) {
   const [records, setRecords] = useState<FlightRecord[]>([]),
     [selected, setSelected] = useState(""),
@@ -72,10 +81,13 @@ export default function FlightWorkbench({
   const [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false),
     [system, setSystem] = useState(""),
-    [sourceDrone, setSourceDrone] = useState(droneIdentity);
+    [sourceDrone, setSourceDrone] = useState(
+      drones?.[0]?.id ?? (drones ? "" : droneIdentity),
+    );
   useEffect(() => {
     let active = true;
-    listFlights()
+    store
+      .listFlights()
       .then((items) => {
         if (active) {
           setRecords(items);
@@ -89,10 +101,22 @@ export default function FlightWorkbench({
     return () => {
       active = false;
     };
-  }, []);
-  const health = draft
+  }, [store]);
+  const battery = batteries.find((b) => b.id === draft?.batteryId);
+  const rawHealth = draft
     ? estimateHealth(draft.flight.batteries, draft.healthInputs)
     : null;
+  const health =
+    rawHealth && battery && !battery.chemistry.startsWith("LiPo")
+      ? {
+          ...rawHealth,
+          health: null,
+          reasons: [
+            ...rawHealth.reasons,
+            "The current weighted health model is only configured for LiPo; this chemistry remains unassessed.",
+          ],
+        }
+      : rawHealth;
   const checks = draft ? reviewChecks(draft.flight, draft.review) : [];
   if (draft?.airspace)
     checks.push({
@@ -109,7 +133,6 @@ export default function FlightWorkbench({
         draft.airspace.dataset.publishedOn +
         ". Vertical limits, map authenticity and temporary restrictions need operator review.",
     });
-  const battery = batteries.find((b) => b.id === draft?.batteryId);
   function select(id: string) {
     setSelected(id);
     setDraft(records.find((record) => record.id === id) ?? null);
@@ -121,6 +144,10 @@ export default function FlightWorkbench({
   }
   async function importFile(file?: File) {
     if (!file) return;
+    if (drones && !drones.some((d) => d.id === sourceDrone)) {
+      setMessage("Select a registered source drone before importing.");
+      return;
+    }
     if (
       !/\.(bin|tlog)$/i.test(file.name) ||
       file.size === 0 ||
@@ -145,7 +172,7 @@ export default function FlightWorkbench({
       )
         .map((byte) => byte.toString(16).padStart(2, "0"))
         .join("");
-      const existing = await listFlights();
+      const existing = await store.listFlights();
       if (existing.some((record) => record.sourceHash === hash))
         throw new Error(
           "This exact source log has already been imported. Open its existing flight record.",
@@ -216,17 +243,22 @@ export default function FlightWorkbench({
             : "Manual selection required",
           healthInputs: {
             ratedMah: pack?.capacityMah ?? 16000,
-            cycles: pack?.cycles ?? 0,
+            cycles: pack?.cycles ?? -1,
             instance: 0,
             baselineResistanceOhms: null,
             expectedDeliveredMah: null,
             capacityTestConfirmed: false,
             comparableConditionsConfirmed: false,
           },
-          review: initialReview(flight),
+          review: {
+            ...initialReview(flight),
+            droneUin: drones?.find((d) => d.id === sourceDrone)?.uin ?? "",
+          },
         } satisfies FlightRecord;
       });
-      await saveFlights(imported, { hash, buffer, filename: file.name });
+      if (!imported.length)
+        throw new Error("No flight intervals found in this log.");
+      await store.saveFlights(imported, { hash, buffer, filename: file.name });
       const next = [...imported, ...existing];
       setRecords(next);
       setSelected(imported[0].id);
@@ -235,7 +267,9 @@ export default function FlightWorkbench({
         parsed.messages +
           " supported messages processed; " +
           imported.length +
-          " interval(s) saved locally with the original source. Review the flight boundaries and evidence.",
+          (drones
+            ? " interval(s) saved to your organization with the private original source. Review flight boundaries and evidence."
+            : " interval(s) saved locally with the original source. Review flight boundaries and evidence."),
       );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Import failed.");
@@ -247,11 +281,15 @@ export default function FlightWorkbench({
     if (!draft) return;
     setBusy(true);
     try {
-      await saveFlights([draft]);
+      await store.saveFlights([draft]);
       setRecords(
         records.map((record) => (record.id === draft.id ? draft : record)),
       );
-      setMessage("Flight review saved in this browser.");
+      setMessage(
+        drones
+          ? "Flight review saved to your organization."
+          : "Flight review saved in this browser.",
+      );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Unable to save.");
     } finally {
@@ -341,13 +379,15 @@ export default function FlightWorkbench({
   }
   return (
     <div className="flight-workbench">
-      {!reportOnly && (
+      {!reportOnly && canEdit && (
         <section className="panel form-grid no-print">
           <h2>Import a real flight log</h2>
           <p className="muted">
             ArduPilot DataFlash .bin and supported MAVLink .tlog messages.
-            Processing and original-file storage stay in this browser. Maximum
-            50 MB per file.
+            {drones
+              ? "Parsing runs on your device; original logs and review records are saved privately to your organization."
+              : "Processing and original-file storage stay in this browser."}{" "}
+            Maximum 50 MB per file.
           </p>
           <div className="form-row">
             <label>
@@ -356,9 +396,20 @@ export default function FlightWorkbench({
                 value={sourceDrone}
                 onChange={(e) => setSourceDrone(e.target.value)}
               >
-                <option value={droneIdentity}>
-                  Local aircraft — enter its actual UIN during review
-                </option>
+                {drones ? (
+                  <>
+                    <option value="">Select source drone</option>
+                    {drones.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.name} · {d.uin || "UIN not set"}
+                      </option>
+                    ))}
+                  </>
+                ) : (
+                  <option value={droneIdentity}>
+                    Local aircraft — enter its actual UIN during review
+                  </option>
+                )}
               </select>
             </label>
             <label>
@@ -473,7 +524,7 @@ export default function FlightWorkbench({
                     healthInputs: {
                       ...draft.healthInputs,
                       ratedMah: pack?.capacityMah ?? 16000,
-                      cycles: pack?.cycles ?? 0,
+                      cycles: pack?.cycles ?? -1,
                       baselineResistanceOhms: null,
                       expectedDeliveredMah: null,
                       capacityTestConfirmed: false,
@@ -527,7 +578,11 @@ export default function FlightWorkbench({
                   type="number"
                   min="0"
                   step="1"
-                  value={draft.healthInputs.cycles}
+                  value={
+                    draft.healthInputs.cycles < 0
+                      ? ""
+                      : draft.healthInputs.cycles
+                  }
                   onChange={(e) =>
                     setDraft({
                       ...draft,
@@ -848,7 +903,11 @@ export default function FlightWorkbench({
                 I reviewed this record and its evidence.
               </label>
             </div>
-            <button disabled={busy} className="primary" onClick={save}>
+            <button
+              disabled={busy || !canEdit}
+              className="primary"
+              onClick={save}
+            >
               Save flight review
             </button>
           </section>
@@ -879,8 +938,11 @@ export default function FlightWorkbench({
               className="secondary"
               onClick={async () => {
                 try {
-                  const source = await readSource(draft.sourceHash);
-                  download(new Blob([source.buffer]), source.filename);
+                  const source = await store.readSource(draft.sourceHash);
+                  download(new Blob([source.buffer]), draft.filename);
+                  setMessage(
+                    "Original log retrieved. The browser download has been requested.",
+                  );
                 } catch (error) {
                   setMessage(
                     error instanceof Error
@@ -908,7 +970,7 @@ export default function FlightWorkbench({
                 )}
                 <div>
                   <h2>{company}</h2>
-                  <p>Flight operations & battery evidence record</p>
+                  <p>Flight Operations Report</p>
                 </div>
               </div>
               <div className="report-meta">
@@ -1052,6 +1114,17 @@ export default function FlightWorkbench({
               are identified separately. Health model: {health.version}.
               Preserve the original source log and review all evidence gaps.
             </footer>
+            <h3>Operator sign-off</h3>
+            <p>
+              Review this record against the original log and applicable
+              operational permissions. Telemetry estimates do not certify
+              battery airworthiness.
+            </p>
+            <p>Remote pilot signature: ____________________ Date: __________</p>
+            <p>
+              Fleet manager signature: ____________________ Organization seal:
+              __________
+            </p>
           </article>
         </>
       )}

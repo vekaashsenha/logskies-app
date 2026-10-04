@@ -38,7 +38,7 @@ The foundation migration provides organization bootstrap, membership RLS, organi
 
 ## Connect Supabase
 
-For Cloudflare deployment, use [hosting instructions](docs/CLOUDFLARE-HOSTING.md) and `npm run build:cloudflare`. This exports the current browser application into `apps/web/out`; cloud flight processing still needs a separate backend.
+For Cloudflare deployment, use [hosting instructions](docs/CLOUDFLARE-HOSTING.md) and `npm run build:cloudflare`. This exports the current browser application into `apps/web/out`; shared flight imports use private Supabase storage and records; server background processing remains a later increment.
 
 See [setup instructions](docs/SUPABASE-SETUP.md). Use the same project for both apps. Create `apps/web/.env.local` and `apps/mobile/.env` from their example files. Only the project URL and publishable key belong in the clients; keep database passwords and service-role/secret keys out of the apps.
 
@@ -48,11 +48,11 @@ First connected milestone: create your organization/battery/drone on web, scan t
 
 - Authenticated hosted organization/role/storage isolation and cross-device tests. Project setup, schema execution and anonymous endpoint checks are complete.
 - Team invitations and membership administration.
-- Shared cloud flight storage, server processing/background jobs and Android flight report access. Current processing and flight history are browser-local.
+- Server processing/background jobs and real Android device validation. Online workspace imports now save original logs and review records privately to Supabase; parsing runs in a browser worker. Android shows shared flight summaries and links to web reports.
 - Validation against customer telemetry, calibrated battery baselines and retirement workflow.
 - Verified DGCA export templates, authoritative airspace data, route/altitude/pilot checks and reviewer approval.
-- Server-generated PDF/Excel and Android report download. Current web PDF uses browser Print / Save PDF; local flight CSV and preflight CSV are available.
-- Subscriptions, production deployment, Android device tests, release icons and Play Store preparation.
+- Server-generated PDF/Excel and Android report download. Current web PDF uses browser Print / Save PDF; flight CSV and preflight CSV are available.
+- Subscriptions, Android device tests, release icons and Play Store preparation. The early-access web app is hosted on Cloudflare Pages at logskies.com.
 
 Reports are deliberately marked draft/unverified. This increment does not establish airworthiness or DGCA compliance.
 
@@ -78,3 +78,4 @@ The Android launcher assets still come from the Expo template. The QA company lo
 The public site and application styling now follow the user's DroneLogbook reference: charcoal navigation, green hero sections, a white canvas, restrained shadows and spacious cards. LogSkies copy, original vector illustrations and identity are retained.
 
 Public routes: `/`, `/solutions`, `/features`, `/pricing`, `/faq`, `/contact`. The local fleet demo is now at `/dashboard`; the connected app remains at `/workspace`. The contact form prepares an inquiry draft with copy/download options and does not send it. Pricing is explicitly proposed.
+

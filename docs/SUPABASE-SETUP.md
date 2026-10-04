@@ -31,3 +31,7 @@ The application account is confirmed and signed in. The user's `DRONE Farm` orga
 The user's company logo is stored privately and loads in the workspace report after reload. Hosted transactional owner/pilot/outsider SQL checks passed on 4 October, with all fixtures rolled back; see `scripts/verify-hosted-rls.sql`. Android device/cross-device and separate real-user browser verification remain pending.
 
 The early-access web application is deployed to `https://logskies-app.pages.dev`. Supabase Site URL is set to this origin and the exact `/workspace` confirmation redirect is allow-listed alongside local development. Custom-domain configuration is pending DNS activation.
+
+## Shared imported flight records
+Apply migrations/202610040001_flight_imports.sql after the foundation. flight_imports holds imported drafts separately from trusted service-generated flight_logs. Members can read; only organization admins can use save_flight_imports. Original logs remain in the private flight-logs bucket at organization/source-hash/source. An interrupted metadata save can leave an orphan source; retry the same file to recover. Do not promote these records to certified flight evidence automatically.
+

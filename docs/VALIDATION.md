@@ -75,3 +75,10 @@ Responsive checks: mobile menu opens/closes on navigation; FAQ expands; page wid
 - Responsive check at 390 px: document scroll width 375 px, no horizontal page overflow. Desktop checked at 1280 px.
 - Screenshot: qa/photographic-home.png.
 - This update does not connect production telemetry, billing or DGCA/eGCA verification. Company-branded report drafts and existing workspace flows remain available. No GitHub push or deployment performed.
+
+## Shared flight workflow — 2026-10-04
+Added configurable battery chemistry/cell count, organization-scoped private raw logs and imported flight reviews, registered drone selection, branded Flight Operations Report signature spaces, and Android shared flight summaries with web report access. Parsing remains in a browser worker. Imported records are user-supplied evidence and do not populate trusted flight_logs or certify DGCA compliance. The new migration applied successfully to hosted Supabase; PostgreSQL tests include duplicate rejection, draft updates, tenant isolation, pilot write denial and cross-organization foreign-key rejection. Browser upload/print and APK validation are still pending at this entry.
+
+
+Connected browser test: synthetic-flight.bin (clearly synthetic fixture) parsed 366 supported messages into a two-minute interval and saved its private original to hosted storage. Manual physical-pack assignment persisted after reload. Original-file retrieval passed SHA-256 verification; in-app browser download completion could not be confirmed. Report preview includes the existing private company logo and evidence gaps. Screenshot: qa/shared-flight-report.png. Both custom-domain HTTPS workspace URLs returned 200. Production Auth Site URL is logskies.com with exact apex/www workspace redirects. The user confirmed signup email delivery, login and fleet persistence earlier.
+

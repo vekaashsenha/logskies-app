@@ -1540,3 +1540,4 @@ h1,h2,h3 {font-weight:600;letter-spacing:normal;}
 .flight-workbench .form-row {align-items:start;}
 @media(max-width:600px){.flight-workbench .stats{grid-template-columns:1fr 1fr}.flight-workbench .stats strong{font-size:15px}.flight-workbench .form-row{grid-template-columns:1fr}.flight-report{padding:20px}.flight-report th{width:38%}}
 @media print {.flight-workbench .flight-report {border:0;box-shadow:none;margin:0;padding:0;width:100%}.flight-report h3{break-after:avoid}.flight-report tr{break-inside:avoid}.source-hash{font-size:9px}}
+@media print { body:has(.flight-report) .fleet-report { display: none; } }

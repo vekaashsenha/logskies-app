@@ -49,12 +49,12 @@ const features = [
   [
     "QR battery identity",
     "Give each physical pack a unique identifier and scan it from the Android field app.",
-    "Available in the prototype",
+    "Available in the online workspace",
   ],
   [
     "Fleet inventory",
     "Register batteries and drones with clear asset tags and organization-level access.",
-    "Available in the prototype",
+    "Available in the online workspace",
   ],
   [
     "Shared preflight records",
@@ -64,12 +64,12 @@ const features = [
   [
     "Company-branded reports",
     "Upload your logo and prepare printable draft record packs with visible evidence status.",
-    "Available in the prototype",
+    "Available in the online workspace",
   ],
   [
     "Telemetry processing",
-    "Import supported .bin and .tlog files locally, review flight intervals and reconcile battery associations.",
-    "Available in the local dashboard",
+    "Parse supported .bin and .tlog files on your device, save private organization flight history and reconcile battery associations.",
+    "Available in the online workspace",
   ],
   [
     "Battery health & audit evidence",
@@ -347,8 +347,9 @@ export default async function Section({
               records, shared preflight sessions and private company-logo
               storage. The current database is hosted in Tokyo. Organization
               membership controls access to these records. Flight imports in
-              the local dashboard remain in your browser; cloud flight upload
-              and processing are not yet available.
+              the demo dashboard remain in your browser. Online workspace imports
+              and reviews are stored privately in Supabase; parsing runs on your
+              device. Imported evidence does not certify compliance.
             </p>
             <h2>Contact drafts</h2>
             <p>
@@ -368,3 +369,4 @@ export default async function Section({
     </main>
   );
 }
+

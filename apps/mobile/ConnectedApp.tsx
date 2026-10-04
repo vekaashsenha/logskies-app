@@ -13,6 +13,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { randomUUID } from "expo-crypto";
+import * as Linking from "expo-linking";
 import { StatusBar } from "expo-status-bar";
 import {
   createClient,
@@ -20,6 +21,8 @@ import {
   loadFleet,
   savePreflight,
   errorMessage,
+  listFlightSummaries,
+  type FlightSummary,
   type Org,
   type FleetBattery,
   type FleetDrone,
@@ -52,6 +55,7 @@ export default function ConnectedApp() {
   const [batteries, setBatteries] = useState<FleetBattery[]>([]);
   const [drones, setDrones] = useState<FleetDrone[]>([]);
   const [sessions, setSessions] = useState<Preflight[]>([]);
+  const [flights, setFlights] = useState<FlightSummary[]>([]);
   const [batteryId, setBatteryId] = useState("");
   const [droneId, setDroneId] = useState("");
   const [manual, setManual] = useState("");
@@ -80,6 +84,7 @@ export default function ConnectedApp() {
           setBatteries([]);
           setDrones([]);
           setSessions([]);
+          setFlights([]);
           setBatteryId("");
           setDroneId("");
           setPassword("");
@@ -121,21 +126,29 @@ export default function ConnectedApp() {
   const refresh = useCallback(async () => {
     if (!orgId) return;
     const epoch = authEpoch.current;
-    const data = await loadFleet(client, orgId);
+    const [data, flightData] = await Promise.all([
+      loadFleet(client, orgId),
+      listFlightSummaries(client, orgId),
+    ]);
     if (epoch !== authEpoch.current) return;
     setBatteries(data.batteries);
     setDrones(data.drones);
     setSessions(data.sessions);
+    setFlights(flightData);
   }, [client, orgId]);
   useEffect(() => {
     let cancelled = false;
     if (orgId && userId)
-      loadFleet(client, orgId)
-        .then((data) => {
+      Promise.all([
+        loadFleet(client, orgId),
+        listFlightSummaries(client, orgId),
+      ])
+        .then(([data, flightData]) => {
           if (!cancelled) {
             setBatteries(data.batteries);
             setDrones(data.drones);
             setSessions(data.sessions);
+            setFlights(flightData);
           }
         })
         .catch((e) => {
@@ -260,6 +273,7 @@ export default function ConnectedApp() {
                       setBatteries([]);
                       setDrones([]);
                       setSessions([]);
+                      setFlights([]);
                       setBatteryId("");
                       setDroneId("");
                     }}
@@ -284,6 +298,7 @@ export default function ConnectedApp() {
                     setBatteries([]);
                     setDrones([]);
                     setSessions([]);
+                    setFlights([]);
                     setBatteryId("");
                     setDroneId("");
                     setScanning(false);
@@ -422,6 +437,34 @@ export default function ConnectedApp() {
                   ) : (
                     <Text style={s.muted}>No sessions recorded.</Text>
                   )}
+                </View>
+                <View style={s.card}>
+                  <Text style={s.heading}>Flight Operations Reports</Text>
+                  <Text style={s.muted}>
+                    Shared imported evidence, subject to operator review. Import
+                    logs and print branded reports in the web workspace.
+                  </Text>
+                  {flights.map((flight) => (
+                    <View key={flight.id} style={s.history}>
+                      <Text style={s.text}>{flight.filename}</Text>
+                      <Text style={s.muted}>
+                        {Number(flight.duration).toFixed(2)} minutes ·{" "}
+                        {flight.purpose || "Purpose not set"}
+                      </Text>
+                    </View>
+                  ))}
+                  {!flights.length && (
+                    <Text style={s.muted}>No imported flights yet.</Text>
+                  )}
+                  <Button
+                    secondary
+                    text="Open web reports"
+                    onPress={() => {
+                      void Linking.openURL(
+                        "https://logskies.com/workspace",
+                      ).catch((e) => setMessage(errorMessage(e)));
+                    }}
+                  />
                 </View>
               </>
             ) : null}

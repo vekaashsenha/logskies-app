@@ -75,23 +75,27 @@ export async function addBattery(
   orgId: string,
   assetTag: string,
   capacityMah: number,
+  chemistry = "LiPo",
+  cellCount = 6,
 ) {
   if (
     !assetTag.trim() ||
     !Number.isInteger(capacityMah) ||
     capacityMah < 1 ||
-    capacityMah > 1000000
+    capacityMah > 1000000 ||
+    !["LiPo", "Li-Ion", "LiFePO4"].includes(chemistry) ||
+    !Number.isInteger(cellCount) ||
+    cellCount < 1 ||
+    cellCount > 32
   )
     throw new Error("Enter a battery tag and valid rated capacity.");
-  const { error } = await client
-    .from("batteries")
-    .insert({
-      org_id: orgId,
-      asset_tag: assetTag.trim(),
-      capacity_mah: capacityMah,
-      chemistry: "LiPo",
-      cell_count: 6,
-    });
+  const { error } = await client.from("batteries").insert({
+    org_id: orgId,
+    asset_tag: assetTag.trim(),
+    capacity_mah: capacityMah,
+    chemistry,
+    cell_count: cellCount,
+  });
   if (error) throw error;
 }
 export async function addDrone(
@@ -101,13 +105,11 @@ export async function addDrone(
   uin: string,
 ) {
   if (!name.trim()) throw new Error("Enter a drone model/name.");
-  const { error } = await client
-    .from("drones")
-    .insert({
-      org_id: orgId,
-      model_name: name.trim(),
-      uin_number: uin.trim() || null,
-    });
+  const { error } = await client.from("drones").insert({
+    org_id: orgId,
+    model_name: name.trim(),
+    uin_number: uin.trim() || null,
+  });
   if (error) throw error;
 }
 export async function savePreflight(
@@ -120,15 +122,13 @@ export async function savePreflight(
     scannedAt: string;
   },
 ) {
-  const { error } = await client
-    .from("preflight_sessions")
-    .insert({
-      org_id: input.orgId,
-      battery_id: input.batteryId,
-      drone_id: input.droneId,
-      client_event_id: input.eventId,
-      scanned_at: input.scannedAt,
-    });
+  const { error } = await client.from("preflight_sessions").insert({
+    org_id: input.orgId,
+    battery_id: input.batteryId,
+    drone_id: input.droneId,
+    client_event_id: input.eventId,
+    scanned_at: input.scannedAt,
+  });
   if (error) throw error;
 }
 export function errorMessage(error: unknown) {
@@ -137,4 +137,29 @@ export function errorMessage(error: unknown) {
     : typeof error === "object" && error !== null && "message" in error
       ? String(error.message)
       : "Operation failed. Please try again.";
+}
+export type FlightSummary = {
+  id: string;
+  drone_id: string;
+  battery_id: string | null;
+  created_at: string;
+  filename: string;
+  purpose: string;
+  duration: number;
+  start_utc: string | null;
+};
+export async function listFlightSummaries(
+  client: SupabaseClient,
+  orgId: string,
+): Promise<FlightSummary[]> {
+  const { data, error } = await client
+    .from("flight_imports")
+    .select(
+      "id,drone_id,battery_id,created_at,filename:record->>filename,purpose:record->review->>purpose,duration:record->flight->durationMinutes,start_utc:record->flight->>startUtc",
+    )
+    .eq("org_id", orgId)
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) throw error;
+  return (data ?? []) as unknown as FlightSummary[];
 }

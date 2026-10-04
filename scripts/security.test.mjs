@@ -22,6 +22,12 @@ test("PostgreSQL policies isolate tenants and reject unauthorized writes", async
     await db.exec(
       "grant select,insert,update,delete on all tables in schema public,storage to authenticated,anon;",
     );
+    await db.exec(
+      fs.readFileSync(
+        "supabase/migrations/202610040001_flight_imports.sql",
+        "utf8",
+      ),
+    );
     const owner = "11111111-1111-4111-8111-111111111111",
       pilot = "22222222-2222-4222-8222-222222222222",
       outsider = "33333333-3333-4333-8333-333333333333";
@@ -172,6 +178,74 @@ test("PostgreSQL policies isolate tenants and reject unauthorized writes", async
     assert.equal(
       (await db.query("select * from storage.objects")).rows.length,
       0,
+    );
+    const imported = {
+      id: "44444444-4444-4444-8444-444444444444",
+      droneId: drone,
+      batteryId: bat,
+      sourceHash: "a".repeat(64),
+      flight: { index: 0 },
+      review: { purpose: "mapping" },
+    };
+    await actor(owner);
+    await db.query("select public.save_flight_imports($1,$2::jsonb)", [
+      org,
+      JSON.stringify([imported]),
+    ]);
+    assert.equal(
+      (await db.query("select * from public.flight_imports")).rows.length,
+      1,
+    );
+    await actor(outsider);
+    assert.equal(
+      (await db.query("select * from public.flight_imports")).rows.length,
+      0,
+    );
+    await assert.rejects(
+      db.query("select public.save_flight_imports($1,$2::jsonb)", [
+        org,
+        JSON.stringify([imported]),
+      ]),
+      /Organization admin required/,
+    );
+    await assert.rejects(
+      db.query("select public.save_flight_imports($1,$2::jsonb)", [
+        other,
+        JSON.stringify([
+          { ...imported, id: "55555555-5555-4555-8555-555555555555" },
+        ]),
+      ]),
+      /foreign key/,
+    );
+    await actor(pilot);
+    await assert.rejects(
+      db.query("select public.save_flight_imports($1,$2::jsonb)", [
+        org,
+        JSON.stringify([imported]),
+      ]),
+      /Organization admin required/,
+    );
+    await actor(owner);
+    await assert.rejects(
+      db.query("select public.save_flight_imports($1,$2::jsonb)", [
+        org,
+        JSON.stringify([
+          { ...imported, id: "55555555-5555-4555-8555-555555555555" },
+        ]),
+      ]),
+      /unique constraint/,
+    );
+    await db.query("select public.save_flight_imports($1,$2::jsonb)", [
+      org,
+      JSON.stringify([{ ...imported, review: { purpose: "inspection" } }]),
+    ]);
+    assert.equal(
+      (
+        await db.query(
+          "select record->'review'->>'purpose' as purpose from public.flight_imports",
+        )
+      ).rows[0].purpose,
+      "inspection",
     );
     await actor("", "anon");
     assert.equal(

@@ -148,7 +148,7 @@ export function KnowledgeHub() {
 export const faqs = [
   [
     "What can I use in the online workspace today?",
-    "Create and confirm an account, create your organization, register batteries and drones, download battery QR labels, save preflight associations and upload your company logo. These records are stored in Supabase and persist after reload. Android uses the same backend; real-device validation is still pending. Imported flight history remains local to the dashboard browser.",
+    "Create and confirm an account, create your organization, register batteries and drones, download battery QR labels, save preflight associations and upload your company logo. These records are stored in Supabase and persist after reload. Android uses the same backend; real-device validation is still pending. Owners and admins can import supported flight logs into private shared history, review evidence and export branded Flight Operations Reports.",
   ],
   [
     "How does the 15-day trial work?",
@@ -176,11 +176,11 @@ export const faqs = [
   ],
   [
     "Which flight logs can I import?",
-    "The local dashboard accepts ArduPilot DataFlash .bin and supported MAVLink .tlog files up to 50 MB. PX4 .ulg files are not supported yet. Available measurements depend on the source log; customer logs still need validation.",
+    "The online workspace and local demo accept ArduPilot DataFlash .bin and supported MAVLink .tlog files up to 50 MB. PX4 .ulg files are not supported yet. Available measurements depend on the source log; customer logs still need validation.",
   ],
   [
     "Where are imported flight records stored?",
-    "Flight logs, observations and reviews are saved in this browser. They do not yet sync to Android or another computer. Clearing site data removes them, so retain original logs and export evidence backups.",
+    "In the online workspace, original logs and imported reviews are saved privately in Supabase for your organization. Parsing runs on your device. The Android app can show shared flight summaries; APK and real-device testing remain pending. The demo dashboard remains browser-local. Retain original logs and export backups.",
   ],
   [
     "Does every flight produce a battery health score?",
@@ -192,7 +192,7 @@ export const faqs = [
   ],
   [
     "How can I download a report?",
-    "Open Reports in the local dashboard after importing a flight. Add your company name and logo under Company settings, review the flight evidence, then use Print / Save PDF, flight CSV or evidence JSON. PDF layout and file downloads still need final browser validation.",
+    "Import a flight in the online workspace, upload your company logo and review the flight evidence. Use Print / Save PDF, flight CSV or evidence JSON. Reports include operator signature spaces and remain subject to review; no DGCA approval or eGCA ingestion is claimed.",
   ],
 ];
 export function FaqSection() {
@@ -214,3 +214,4 @@ export function FaqSection() {
     </section>
   );
 }
+

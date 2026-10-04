@@ -1,5 +1,7 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import FlightWorkbench from "@/components/flight-workbench";
+import { cloudFlightStore } from "@/lib/cloud-flight-storage";
 import Link from "next/link";
 import Image from "next/image";
 import QRCode from "qrcode";
@@ -35,6 +37,8 @@ export default function Workspace() {
   const [sessions, setSessions] = useState<Preflight[]>([]);
   const [tag, setTag] = useState("");
   const [capacity, setCapacity] = useState("16000");
+  const [chemistry, setChemistry] = useState("LiPo");
+  const [cells, setCells] = useState("6");
   const [droneName, setDroneName] = useState("");
   const [uin, setUin] = useState("");
   const [batteryId, setBatteryId] = useState("");
@@ -45,6 +49,10 @@ export default function Workspace() {
   const [qrRecord, setQr] = useState({ batteryId: "", url: "" });
   const [canAdmin, setCanAdmin] = useState(false);
   const activeOrg = orgs.find((o) => o.id === orgId);
+  const flightStore = useMemo(
+    () => (client && orgId ? cloudFlightStore(client, orgId) : undefined),
+    [orgId],
+  );
   const logo =
     logoRecord.path === activeOrg?.logo_storage_path ? logoRecord.url : "";
   const qr = qrRecord.batteryId === batteryId ? qrRecord.url : "";
@@ -494,7 +502,14 @@ export default function Workspace() {
             onSubmit={(e) => {
               e.preventDefault();
               void run(async () => {
-                await addBattery(client, orgId, tag, Number(capacity));
+                await addBattery(
+                  client,
+                  orgId,
+                  tag,
+                  Number(capacity),
+                  chemistry,
+                  Number(cells),
+                );
                 setTag("");
                 await refresh();
               });
@@ -522,8 +537,31 @@ export default function Workspace() {
               />
             </label>
             <p className="muted">
-              Initial chemistry: LiPo / 6 cells. Health remains unassessed.
+              Use the manufacturer label. Asset tag is your unique physical pack
+              label, for example BATT-001. Health remains unassessed.
             </p>
+            <label>
+              Chemistry
+              <select
+                value={chemistry}
+                onChange={(e) => setChemistry(e.target.value)}
+              >
+                <option>LiPo</option>
+                <option>Li-Ion</option>
+                <option>LiFePO4</option>
+              </select>
+            </label>
+            <label>
+              Cell count (series)
+              <input
+                required
+                type="number"
+                min="1"
+                max="32"
+                value={cells}
+                onChange={(e) => setCells(e.target.value)}
+              />
+            </label>
             <button className="primary" disabled={busy}>
               Save battery
             </button>
@@ -561,6 +599,34 @@ export default function Workspace() {
       )}
       {orgId && (
         <>
+          {flightStore && (
+            <FlightWorkbench
+              key={orgId + userId}
+              store={flightStore}
+              canEdit={canAdmin}
+              drones={drones.map((d) => ({
+                id: d.id,
+                name: d.model_name,
+                uin: d.uin_number ?? "",
+              }))}
+              batteries={batteries.map((b) => ({
+                id: b.id,
+                tag: b.asset_tag,
+                chemistry: `${b.chemistry} ${b.cell_count}S`,
+                capacityMah: b.capacity_mah,
+                cycles: -1,
+                health: null,
+              }))}
+              sessions={sessions.map((s) => ({
+                id: s.id,
+                batteryId: s.battery_id,
+                droneId: s.drone_id,
+                scannedAt: s.scanned_at,
+              }))}
+              company={activeOrg?.name ?? ""}
+              logo={logo}
+            />
+          )}
           <div className="actions no-print">
             <button
               className="secondary"
@@ -573,7 +639,7 @@ export default function Workspace() {
               Print / Save branded draft PDF
             </button>
           </div>
-          <article className="report">
+          <article className="report fleet-report">
             <div className="report-header">
               <div className="report-company">
                 {logo && (
