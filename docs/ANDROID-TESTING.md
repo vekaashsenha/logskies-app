@@ -5,7 +5,7 @@ Build profile: `preview`, internal APK, public Supabase configuration in the pro
 
 Initial build: https://expo.dev/accounts/vekaashsenhas-team/projects/logskies/builds/402c89c6-9c4d-410f-a0e4-e0a316310af0
 
-Next preview submitted from commit 69f64d4: https://expo.dev/accounts/vekaashsenhas-team/projects/logskies/builds/2c095009-0f40-47a8-a519-e0b973d62fca . Includes reset-email action, web account-creation and current FAQ links. Submission is not a finished APK; inspect build status before installation.
+Next preview from commit 69f64d4: https://expo.dev/accounts/vekaashsenhas-team/projects/logskies/builds/2c095009-0f40-47a8-a519-e0b973d62fca . FINISHED status verified on 4 October 2026. Includes reset-email action, web account-creation and current FAQ links. APK: https://expo.dev/artifacts/eas/nbH0bDBUTJ3ZFjMrQBab86kuhldTA7EGVPsYXuqPy2I.apk . Installation and recovery testing on the user's device remain pending.
 
 Build status verified FINISHED on 4 October 2026. APK: https://expo.dev/artifacts/eas/I5Yfrg-Iqw1NU1sFWN7UPxzzTBFcaJguIj2KI_uzbbQ.apk
 
