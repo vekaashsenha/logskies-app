@@ -9,6 +9,7 @@
     "dev:web": "npm run dev --workspace=@logskies/web",
     "dev:android": "npm run android --workspace=@logskies/mobile",
     "build:web": "npm run build --workspace=@logskies/web",
+    "build:cloudflare": "node scripts/build-cloudflare.mjs",
     "lint": "npm run lint --workspace=@logskies/web",
     "typecheck:mobile": "npm exec --workspace=@logskies/mobile -- tsc --noEmit",
     "test": "node --experimental-strip-types --test packages/domain/domain.test.ts packages/telemetry/*.test.ts scripts/security.test.mjs"

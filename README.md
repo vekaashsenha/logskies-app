@@ -34,9 +34,11 @@ First release is online-only. Device-local demo history is not offline synchroni
 
 Shared packages provide domain types, conservative missing-telemetry behavior, unambiguous timestamp matching, CSV escaping and Supabase fleet operations.
 
-The foundation migration provides organization bootstrap, membership RLS, organization-consistent asset foreign keys and private storage buckets. It is now applied to the hosted project. Embedded PostgreSQL isolation tests and hosted anonymous REST/Auth/Storage checks pass; authenticated user and cross-device validation still require application sign-in.
+The foundation migration provides organization bootstrap, membership RLS, organization-consistent asset foreign keys and private storage buckets. It is applied to the hosted project. Embedded PostgreSQL isolation tests and hosted anonymous REST/Auth/Storage checks pass. Authenticated web fleet/preflight persistence and private company-logo loading after reload are verified; hosted cross-user isolation and Android device checks remain pending.
 
 ## Connect Supabase
+
+For Cloudflare deployment, use [hosting instructions](docs/CLOUDFLARE-HOSTING.md) and `npm run build:cloudflare`. This exports the current browser application into `apps/web/out`; cloud flight processing still needs a separate backend.
 
 See [setup instructions](docs/SUPABASE-SETUP.md). Use the same project for both apps. Create `apps/web/.env.local` and `apps/mobile/.env` from their example files. Only the project URL and publishable key belong in the clients; keep database passwords and service-role/secret keys out of the apps.
 
