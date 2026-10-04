@@ -64,7 +64,7 @@ export function SiteHeader() {
           >
             Sign in <span aria-hidden="true">↗</span>
           </Link>
-          <Link href="/contact?interest=trial" className="nav-signin" onClick={() => setOpen(false)}>Start 15-Day Free Trial</Link>
+          <Link href="/workspace" className="nav-signin" onClick={() => setOpen(false)}>Open workspace</Link>
         </nav>
       </div>
     </header>

@@ -28,4 +28,6 @@ Flight import and report history in `/dashboard` still remain browser-local. Con
 
 The application account is confirmed and signed in. The user's `DRONE Farm` organization loads successfully. Clearly labelled synthetic battery and drone records and one preflight association were saved through the connected workspace and persisted after a full reload, along with the authenticated session. Screenshot: `qa/supabase-authenticated-workspace.png`.
 
-Private company-logo upload, hosted multi-user role/isolation checks and Android device/cross-device verification remain pending. Local migration security tests do not replace hosted checks.
+The user's company logo is stored privately and loads in the workspace report after reload. Hosted transactional owner/pilot/outsider SQL checks passed on 4 October, with all fixtures rolled back; see `scripts/verify-hosted-rls.sql`. Android device/cross-device and separate real-user browser verification remain pending.
+
+The early-access web application is deployed to `https://logskies-app.pages.dev`. Supabase Site URL is set to this origin and the exact `/workspace` confirmation redirect is allow-listed alongside local development. Custom-domain configuration is pending DNS activation.
