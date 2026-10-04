@@ -147,6 +147,10 @@ export function KnowledgeHub() {
 }
 export const faqs = [
   [
+    "What can I use in the online workspace today?",
+    "Create and confirm an account, create your organization, register batteries and drones, download battery QR labels, save preflight associations and upload your company logo. These records are stored in Supabase and persist after reload. Android uses the same backend; real-device validation is still pending. Imported flight history remains local to the dashboard browser.",
+  ],
+  [
     "How does the 15-day trial work?",
     "A 15-day trial is planned for launch. Enrollment and billing are not active yet; the interactive demo is available now, and you can prepare an inquiry for launch access.",
   ],

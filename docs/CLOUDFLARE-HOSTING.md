@@ -21,6 +21,10 @@ Check direct navigation/reload on `/workspace`, `/solutions`, `/faq` and knowled
 
 Local checks on 4 October 2026: static production export succeeds (18 generated pages); all 15 domain/telemetry/PostgreSQL policy tests pass. Authenticated web fleet/preflight persistence and the user's company logo loading after reload are verified.
 
+Hosted transactional role checks also passed: owner organization bootstrap, pilot fleet reads, denied pilot fleet writes, denied membership escalation, outsider organization/battery/membership reads, denied outsider fleet writes and private logo metadata isolation. Fixtures were rolled back. Repeat with `scripts/verify-hosted-rls.sql` in the SQL Editor. Evidence: `qa/hosted-rls-pass.png`. These SQL checks do not replace a second real-user/browser and Android workflow test.
+
+Cloudflare's initial Linux build exposed a missing optional Tailwind binding in the Windows-generated lockfile. The web workspace now explicitly declares the matching Linux x64 GNU binding as an optional dependency.
+
 The npm web advisory scan reports `braces` and its dependent `micromatch`. The registry's current braces release is 3.0.3, still within the advisory range; no safe patched release was available during this check. The observed web dependency path is lint tooling (`eslint-config-next` → `fast-glob`), not shipped application code. Static hosting has no Node request-time execution. Keep tracking upstream fixes; this is not a claim that the full monorepo audit is clean.
 
 References: [Cloudflare static Next.js guide](https://developers.cloudflare.com/pages/framework-guides/nextjs/deploy-a-static-nextjs-site/), bundled Next.js static export documentation.

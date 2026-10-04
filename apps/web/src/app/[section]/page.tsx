@@ -59,7 +59,7 @@ const features = [
   [
     "Shared preflight records",
     "Associate a pack and drone before flight, using the same online workspace across web and Android.",
-    "Requires Supabase setup",
+    "Available in the online workspace",
   ],
   [
     "Company-branded reports",
@@ -343,10 +343,12 @@ export default async function Section({
             </p>
             <h2>Connected workspace</h2>
             <p>
-              When configured, Supabase handles account authentication,
-              organization fleet records and private storage for logos and logs.
-              The project owner must configure and verify the service before
-              use.
+              Supabase handles account authentication, organization fleet
+              records, shared preflight sessions and private company-logo
+              storage. The current database is hosted in Tokyo. Organization
+              membership controls access to these records. Flight imports in
+              the local dashboard remain in your browser; cloud flight upload
+              and processing are not yet available.
             </p>
             <h2>Contact drafts</h2>
             <p>
