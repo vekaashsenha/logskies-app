@@ -326,7 +326,7 @@ export default function Workspace() {
           <p className="eyebrow">LOGSKIES / SHARED FLEET</p>
           <h1>{activeOrg?.name ?? "Create your organization"}</h1>
           <p className="muted">
-            Online workspace · Stored in your Supabase project
+            Shared fleet records · Private to your organization
           </p>
         </div>
         <button

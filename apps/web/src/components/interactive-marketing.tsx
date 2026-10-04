@@ -257,6 +257,29 @@ const rows = [
 ];
 export function PricingMatrix() {
   const [annual, setAnnual] = useState(false);
+  if (!hasPaymentLinks())
+    return (
+      <section className="public-section public-container">
+        <div className="public-card">
+          <p className="section-kicker">EARLY ACCESS</p>
+          <h2>Start with your fleet workspace.</h2>
+          <p>
+            Register drones and batteries, record preflights, import supported
+            flight logs and prepare company-branded Flight Operations Reports.
+          </p>
+          <p>
+            Paid subscriptions are not open yet. Final pricing and plan limits
+            will be published when billing is available.
+          </p>
+          <Link href="/workspace" className="primary">
+            Open your workspace →
+          </Link>
+          <p className="muted">
+            No payment is collected in the current early-access workflow.
+          </p>
+        </div>
+      </section>
+    );
   return (
     <section className="public-section public-container">
       <div className="billing-toggle" role="group" aria-label="Billing period">

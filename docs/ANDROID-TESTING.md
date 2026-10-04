@@ -7,7 +7,7 @@ Initial build: https://expo.dev/accounts/vekaashsenhas-team/projects/logskies/bu
 
 Build status verified FINISHED on 4 October 2026. APK: https://expo.dev/artifacts/eas/I5Yfrg-Iqw1NU1sFWN7UPxzzTBFcaJguIj2KI_uzbbQ.apk
 
-TypeScript and Expo lint pass. Physical Android device testing remains pending. Record the actual outcome below after installing the finished APK.
+TypeScript and Expo lint pass. The user confirmed successful Android sign-in, web preflight synchronization, shared flight-history access and opening web reports on 4 October 2026. Phone model/Android version, camera QR scanning, session persistence/logout and network-failure behavior still need verification.
 
 ## Device checks
 

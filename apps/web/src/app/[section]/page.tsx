@@ -40,9 +40,11 @@ export async function generateMetadata({
   const { section } = await params;
   return {
     title:
-      section === "faq"
-        ? "FAQ"
-        : section.charAt(0).toUpperCase() + section.slice(1),
+      section === "dgca-compliance"
+        ? "Flight Operations Reports"
+        : section === "faq"
+          ? "FAQ"
+          : section.charAt(0).toUpperCase() + section.slice(1),
   };
 }
 const features = [
@@ -203,8 +205,8 @@ export default async function Section({
         <>
           <PageIntro
             label="PLANS & PRICING"
-            title="A plan for your next stage."
-            description="Proposed launch plans for individual operators and growing fleet teams. Explore the product now while subscriptions and final plan limits are being prepared."
+            title="Start with early access."
+            description="Explore the early-access workspace. Paid subscriptions and final plan limits will be announced when billing opens."
           />
           <PricingMatrix />
         </>
@@ -214,7 +216,7 @@ export default async function Section({
           <PageIntro
             label="FREQUENTLY ASKED QUESTIONS"
             title="A clearer picture of LogSkies."
-            description="Understand the workflow, the current MVP and what is being built next."
+            description="Find out how to manage your fleet, share records and prepare flight reports."
           />
           <FaqSection />
         </>
@@ -223,21 +225,21 @@ export default async function Section({
         <>
           <PageIntro
             label="LET’S TALK OPERATIONS"
-            title="Tell us what your fleet needs."
-            description="Whether you fly agricultural missions, map a site or manage a training fleet, your workflow helps shape what comes next."
+            title="Start with your fleet workflow."
+            description="Explore the workspace and find answers about equipment, flight records and reports."
           />
           <section className="public-section public-container contact-grid">
             <div>
               <p className="section-kicker">START WITH YOUR WORKFLOW</p>
-              <h2>Make the next conversation useful.</h2>
+              <h2>Bring your operation together.</h2>
               <p className="large-copy">
-                Tell us about your fleet size, how you identify batteries today,
-                and the records your team needs to prepare.
+                Register your equipment, identify each physical battery and keep
+                the evidence behind your flight records together.
               </p>
               <ul className="check-list">
-                <li>What kind of missions do you fly?</li>
-                <li>How many pilots and drones are involved?</li>
-                <li>Where does your current workflow get difficult?</li>
+                <li>Register drones and battery packs.</li>
+                <li>Capture preflights on web and Android.</li>
+                <li>Review flight evidence before exporting reports.</li>
               </ul>
               <Link href="/dashboard" className="secondary">
                 Explore the demo first →
@@ -294,9 +296,7 @@ export default async function Section({
                 <article className="public-card" key={title}>
                   <h2>{title}</h2>
                   <p>{text}</p>
-                  <span className="status-pill">
-                    Local evidence review available
-                  </span>
+                  <span className="status-pill">Flight evidence review</span>
                 </article>
               ))}
             </div>
@@ -328,9 +328,9 @@ export default async function Section({
       {section === "privacy" && (
         <>
           <PageIntro
-            label="PROTOTYPE DATA INFORMATION"
+            label="PRIVACY & DATA"
             title="Understand where your records live."
-            description="This prototype disclosure describes the current implementation. A full production privacy policy will be published before launch."
+            description="How the early-access workspace handles account, fleet and flight records. Public privacy contact and retention terms are still being finalized."
           />
           <section className="public-section public-container guide-article">
             <h2>Local demo</h2>
@@ -346,15 +346,15 @@ export default async function Section({
               Supabase handles account authentication, organization fleet
               records, shared preflight sessions and private company-logo
               storage. The current database is hosted in Tokyo. Organization
-              membership controls access to these records. Flight imports in
-              the demo dashboard remain in your browser. Online workspace imports
+              membership controls access to these records. Flight imports in the
+              demo dashboard remain in your browser. Online workspace imports
               and reviews are stored privately in Supabase; parsing runs on your
               device. Imported evidence does not certify compliance.
             </p>
-            <h2>Contact drafts</h2>
+            <h2>Contact page</h2>
             <p>
-              The contact form creates an inquiry draft locally. It does not
-              send your details to a sales team.
+              The contact page does not collect inquiries or send your details
+              to a sales team. A public support channel is being finalized.
             </p>
             <h2>Before production</h2>
             <p>
@@ -369,4 +369,3 @@ export default async function Section({
     </main>
   );
 }
-

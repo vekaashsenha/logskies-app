@@ -34,11 +34,11 @@ export function CallToAction() {
           </p>
         </div>
         <div className="cta-buttons">
-          <Link href="/dashboard" className="button-white">
-            Explore the demo →
+          <Link href="/workspace" className="button-white">
+            Open your workspace →
           </Link>
-          <Link href="/contact" className="button-outline-light">
-            Talk to us
+          <Link href="/dashboard" className="button-outline-light">
+            Explore the demo
           </Link>
         </div>
       </div>
@@ -46,8 +46,33 @@ export function CallToAction() {
   );
 }
 export function IndustryArt({ kind }: { kind: number }) {
-  const names = ["agriculture", "survey", "mining", "training", "inspection", "delivery"];
-  return <Image src={`/images/industries/${names[kind]}.png`} alt={["Agricultural spray drone above a green rice field", "Mapping drone surveying rural parcels", "Survey drone over an open pit quarry", "Drone pilots at an outdoor training field", "Drone inspecting powerline infrastructure", "Cargo drone above rural countryside"][kind]} width={1536} height={1024} className="industry-art" sizes="(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 600px" />;
+  const names = [
+    "agriculture",
+    "survey",
+    "mining",
+    "training",
+    "inspection",
+    "delivery",
+  ];
+  return (
+    <Image
+      src={`/images/industries/${names[kind]}.png`}
+      alt={
+        [
+          "Agricultural spray drone above a green rice field",
+          "Mapping drone surveying rural parcels",
+          "Survey drone over an open pit quarry",
+          "Drone pilots at an outdoor training field",
+          "Drone inspecting powerline infrastructure",
+          "Cargo drone above rural countryside",
+        ][kind]
+      }
+      width={1536}
+      height={1024}
+      className="industry-art"
+      sizes="(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 600px"
+    />
+  );
 }
 export const industries = [
   {
@@ -84,9 +109,9 @@ export const industries = [
     ],
   },
   {
-    title: "Training & RPTOs",
+    title: "Training operations",
     description:
-      "Help training teams establish a repeatable workflow for equipment selection, preflight capture and record review.",
+      "Organize equipment selection, preflight capture and record review for training flights. Dedicated RPTO student records and instructor approvals are not included in this release.",
     kind: 3,
     points: [
       "Registered drones and packs",

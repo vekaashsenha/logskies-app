@@ -6,8 +6,8 @@ const links = [
   ["Solutions", "/solutions"],
   ["Features", "/features"],
   ["Integrations", "/integrations"],
-  ["DGCA Compliance", "/dgca-compliance"],
-  ["Pricing Matrix", "/pricing"],
+  ["Flight Reports", "/dgca-compliance"],
+  ["Pricing", "/pricing"],
   ["Knowledge Hub", "/knowledge-hub"],
 ];
 export function SiteHeader() {
@@ -55,16 +55,15 @@ export function SiteHeader() {
             className="nav-demo"
             onClick={() => setOpen(false)}
           >
-            Contact Us
+            Help & contact
           </Link>
           <Link
             href="/workspace"
-            className="nav-login"
+            className="nav-signin"
             onClick={() => setOpen(false)}
           >
-            Sign in <span aria-hidden="true">↗</span>
+            Open workspace
           </Link>
-          <Link href="/workspace" className="nav-signin" onClick={() => setOpen(false)}>Open workspace</Link>
         </nav>
       </div>
     </header>
@@ -101,7 +100,10 @@ export function SiteFooter() {
       </div>
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} LogSkies</span>
-        <span>Independent platform. Report drafts require evidence review; no DGCA endorsement.</span>
+        <span>
+          Independent platform. Report drafts require evidence review; no DGCA
+          endorsement.
+        </span>
       </div>
     </footer>
   );

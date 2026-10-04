@@ -5,19 +5,19 @@ const integrations = [
   [
     "ArduPilot",
     ".bin DataFlash logs",
-    "Import supported flight and battery messages in the local dashboard. Available fields depend on the recorded log.",
-    "Local import available",
+    "Import supported flight and battery messages in your workspace. Available fields depend on the recorded log.",
+    "Supported file import",
   ],
   [
     "Mission Planner",
     ".tlog telemetry logs",
     "Import supported MAVLink telemetry messages. Review timestamps and flight boundaries before exporting.",
-    "Local import available",
+    "Supported file import",
   ],
   [
     "CubePilot",
     "Cube Orange / Blue",
-    "ArduPilot .bin logs use the local DataFlash parser. Compatibility depends on the installed firmware and recorded messages.",
+    "ArduPilot .bin logs use the DataFlash parser. Compatibility depends on the installed firmware and recorded messages.",
     "Sample validation required",
   ],
   [
@@ -29,7 +29,7 @@ const integrations = [
   [
     "QGroundControl",
     "Ground control station",
-    "Supported MAVLink .tlog files can be imported locally. Other recording formats need separate validation.",
+    "Supported MAVLink .tlog files can be imported in your workspace. Other recording formats need separate validation.",
     "Sample validation required",
   ],
   [
@@ -148,15 +148,15 @@ export function KnowledgeHub() {
 export const faqs = [
   [
     "What can I use in the online workspace today?",
-    "Create and confirm an account, create your organization, register batteries and drones, download battery QR labels, save preflight associations and upload your company logo. These records are stored in Supabase and persist after reload. Android uses the same backend; real-device validation is still pending. Owners and admins can import supported flight logs into private shared history, review evidence and export branded Flight Operations Reports.",
+    "Create and confirm an account, create your organization, register batteries and drones, download battery QR labels, save preflight associations and upload your company logo. These records are stored in Supabase and persist after reload. The Android preview shares these records; sign-in, preflight sync and flight-history access have been checked on a test device. Owners and admins can import supported flight logs into private shared history, review evidence and export branded Flight Operations Reports.",
   ],
   [
-    "How does the 15-day trial work?",
-    "A 15-day trial is planned for launch. Enrollment and billing are not active yet; the interactive demo is available now, and you can prepare an inquiry for launch access.",
+    "Is a paid subscription required now?",
+    "Paid subscriptions are not open yet. You can use the current early-access workspace without entering payment details. Final plans and limits will be published when billing is available.",
   ],
   [
-    "Can I pay with UPI AutoPay?",
-    "UPI AutoPay is planned. Payment processing and recurring subscriptions have not been connected.",
+    "Are payments available?",
+    "Payments and recurring subscriptions are not active in the current release.",
   ],
   [
     "Can pilots scan without internet in rural areas?",
@@ -180,7 +180,7 @@ export const faqs = [
   ],
   [
     "Where are imported flight records stored?",
-    "In the online workspace, original logs and imported reviews are saved privately in Supabase for your organization. Parsing runs on your device. The Android app can show shared flight summaries; APK and real-device testing remain pending. The demo dashboard remains browser-local. Retain original logs and export backups.",
+    "In the online workspace, original logs and imported reviews are saved privately in Supabase for your organization. Parsing runs on your device. The Android app can show shared flight summaries; Android preview sign-in, preflight sync, flight history and opening web reports have been checked on a test device. Camera scanning, session/logout and network-failure checks remain pending. The demo dashboard remains browser-local. Retain original logs and export backups.",
   ],
   [
     "Does every flight produce a battery health score?",
@@ -214,4 +214,3 @@ export function FaqSection() {
     </section>
   );
 }
-
