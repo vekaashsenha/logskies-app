@@ -14,7 +14,7 @@ The site is suitable for controlled early access, not a completed paid or regula
 
 ## Verification
 
-Desktop: solutions, features, integrations, reports, pricing, knowledge hub, FAQ, contact, privacy and workspace showed no horizontal overflow, broken loaded images or unnamed buttons. At 390px width, home, all public sections and demo showed no horizontal overflow or broken loaded images; mobile navigation opens correctly. Code tests, lint and production build are recorded with the release.
+Desktop: solutions, features, integrations, reports, pricing, knowledge hub, FAQ, contact, privacy and workspace showed no horizontal overflow, broken loaded images or unnamed buttons. At 390px width, home, all public sections and demo showed no horizontal overflow or broken loaded images; mobile navigation opens correctly. All 15 tests, web lint and production static build passed. Cloudflare deployed commit 7d66f68; live home, pricing and contact content were verified. Screenshots: qa/prelaunch-home.png and qa/prelaunch-pricing.png.
 
 ## Remaining launch work
 
@@ -24,5 +24,6 @@ Desktop: solutions, features, integrations, reports, pricing, knowledge hub, FAQ
 4. Finish Android QR-camera/manual fallback, session/logout and network-failure tests; record device model/version. Launcher branding, release AAB and Play Store work remain pending.
 5. Before charging, configure payment verification, subscriptions, final plan limits and customer terms. Payments remain paused.
 6. Establish an operational backup/restore and support process before broad customer onboarding. Existing tenant isolation checks pass, but no restore exercise is claimed.
+7. Add and validate the customer password-recovery workflow; the current login page has sign-in and signup only.
 
 Synthetic test records remain labeled; no customer data was deleted during this review.
