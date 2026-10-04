@@ -32,6 +32,7 @@ export default function Workspace() {
   const [password, setPassword] = useState("");
   const [recovering, setRecovering] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [orgs, setOrgs] = useState<Org[]>([]);
   const [orgId, setOrgId] = useState("");
   const [orgName, setOrgName] = useState("");
@@ -219,6 +220,10 @@ export default function Workspace() {
   }
   async function auth(signup: boolean) {
     if (!client) return;
+    if (signup && !termsAccepted) {
+      setMessage("Read and agree to the Terms before creating an account.");
+      return;
+    }
     await run(async () => {
       const result = signup
         ? await client!.auth.signUp({
@@ -376,13 +381,29 @@ export default function Workspace() {
             {busy ? "Working…" : "Sign in"}
           </button>
           <button
-            disabled={busy || !email || password.length < 8}
+            disabled={busy || !email || password.length < 8 || !termsAccepted}
             type="button"
             className="secondary"
             onClick={() => void auth(true)}
           >
             Create account
           </button>
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+            />
+            For account creation, I agree to the{" "}
+            <Link href="/terms" target="_blank">
+              Terms and Conditions
+            </Link>{" "}
+            and have read the{" "}
+            <Link href="/privacy" target="_blank">
+              Privacy Policy
+            </Link>
+            .
+          </label>
           {message && <p role="status">{message}</p>}
           <button
             type="button"

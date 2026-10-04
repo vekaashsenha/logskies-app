@@ -8,6 +8,7 @@ import {
   industries,
 } from "@/components/marketing";
 import ContactForm from "@/components/contact-form";
+import LegalPolicy from "@/components/legal-policy";
 import {
   IndustryExplorer,
   WorkflowDemo,
@@ -28,6 +29,7 @@ const sections = [
   "dgca-compliance",
   "knowledge-hub",
   "privacy",
+  "terms",
 ];
 export function generateStaticParams() {
   return sections.map((section) => ({ section }));
@@ -325,44 +327,24 @@ export default async function Section({
           <FaqSection />
         </>
       )}
+      {section === "terms" && (
+        <>
+          <PageIntro
+            label="LEGAL"
+            title="Terms and Conditions"
+            description="Terms for using the LogSkies web workspace and Android application."
+          />
+          <LegalPolicy kind="terms" />
+        </>
+      )}
       {section === "privacy" && (
         <>
           <PageIntro
             label="PRIVACY & DATA"
-            title="Understand where your records live."
-            description="How the early-access workspace handles account, fleet and flight records. Public privacy contact and retention terms are still being finalized."
+            title="Privacy Policy"
+            description="How LogSkies handles your account, fleet, flight records and support requests."
           />
-          <section className="public-section public-container guide-article">
-            <h2>Local demo</h2>
-            <p>
-              Fleet records and branding are stored in local storage. Imported
-              logs, source originals, observations and reviews are stored in
-              IndexedDB in this browser. They do not yet sync across devices.
-              Clearing site data removes these records; retain originals and
-              export evidence backups.
-            </p>
-            <h2>Connected workspace</h2>
-            <p>
-              Supabase handles account authentication, organization fleet
-              records, shared preflight sessions and private company-logo
-              storage. The current database is hosted in Tokyo. Organization
-              membership controls access to these records. Flight imports in the
-              demo dashboard remain in your browser. Online workspace imports
-              and reviews are stored privately in Supabase; parsing runs on your
-              device. Imported evidence does not certify compliance.
-            </p>
-            <h2>Contact page</h2>
-            <p>
-              The contact page does not collect inquiries or send your details
-              to a sales team. A public support channel is being finalized.
-            </p>
-            <h2>Before production</h2>
-            <p>
-              Retention periods, account deletion, privacy contact details and
-              any analytics services must be defined before production
-              onboarding.
-            </p>
-          </section>
+          <LegalPolicy kind="privacy" />
         </>
       )}
       {section !== "contact" && <CallToAction />}

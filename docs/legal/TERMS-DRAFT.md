@@ -5,7 +5,7 @@
 ## Owner details to complete
 
 Operator: Kalka Traders, trading as LogSkies (owner to confirm legal form and full registered name).
-Registered address: pending owner details.
+Registered address: First Floor, 3012, Green Field Colony, Faridabad, Haryana 121010, India.
 Support and privacy contact: proposed support@logskies.com; activation and receiving test pending.
 Effective date: set when approved and published.
 

@@ -2,8 +2,8 @@
 
 **Draft for owner review — not yet published or effective. Prepared 4 October 2026.**
 
-Operator: Kalka Traders, trading as LogSkies; full legal name/form and registered address require confirmation.
-Privacy/grievance contact: proposed support@logskies.com; responsible person's name and receiving test pending.
+Operator: Kalka Traders, trading as LogSkies. Registered address: First Floor, 3012, Green Field Colony, Faridabad, Haryana 121010, India. Legal form remains to be confirmed.
+Privacy/grievance contact: Kritika, Founder. Proposed email: support@logskies.com; receiving test pending.
 Effective date: set after review and publication.
 
 ## 1. Scope

@@ -214,6 +214,45 @@ export default function ConnectedApp() {
             </Text>
           </View>
         ) : null}
+        <View style={s.card}>
+          <Text style={s.heading}>Help & legal</Text>
+          <Button
+            text="Support & privacy email"
+            onPress={() =>
+              void run(async () => {
+                await Linking.openURL("mailto:support@logskies.com");
+              })
+            }
+          />
+          <Button
+            text="Terms and Conditions"
+            onPress={() =>
+              void run(async () => {
+                await Linking.openURL("https://logskies.com/terms");
+              })
+            }
+          />
+          <Button
+            text="Privacy Policy"
+            onPress={() =>
+              void run(async () => {
+                await Linking.openURL("https://logskies.com/privacy");
+              })
+            }
+          />
+          {userId && (
+            <Button
+              text="Request account deletion"
+              onPress={() =>
+                void run(async () => {
+                  await Linking.openURL(
+                    "mailto:support@logskies.com?subject=LogSkies%20account%20deletion%20request",
+                  );
+                })
+              }
+            />
+          )}
+        </View>
         {!ready ? (
           <Text style={s.text}>Loading account…</Text>
         ) : !userId ? (

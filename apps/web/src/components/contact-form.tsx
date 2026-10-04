@@ -14,8 +14,9 @@ export default function ContactForm() {
         Read frequently asked questions
       </Link>
       <p className="muted">
-        A public support channel is being finalized. This page does not collect
-        or send inquiries.
+        Email support and privacy requests to{" "}
+        <a href="mailto:support@logskies.com">support@logskies.com</a>. Please
+        do not send passwords or reset links.
       </p>
     </div>
   );

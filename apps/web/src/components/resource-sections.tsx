@@ -147,6 +147,10 @@ export function KnowledgeHub() {
 }
 export const faqs = [
   [
+    "How do I contact support or request account deletion?",
+    "Email support@logskies.com for help, privacy concerns or an account-deletion request. Kritika, Founder, is the privacy contact. Requests are handled manually with identity checks where needed. Organization-owned records may need an authorized organization's involvement. See the Privacy Policy and Terms; signing out does not delete hosted records.",
+  ],
+  [
     "How do I reset my password on web or Android?",
     "Enter your account email on the sign-in screen and select Forgot password. Open the reset email in your browser, choose and confirm a new password, then use it on both web and Android. The reset action is included in the next Android preview; older APKs can use the website sign-in screen. Never share your password or reset link.",
   ],

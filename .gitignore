@@ -9,3 +9,5 @@ dist-check/
 out/
 docs/qa/expo-account-setup.png
 docs/qa/expo-cli-authorization.png
+docs/qa/support-email-active.png
+docs/qa/support-email-dns-review.png

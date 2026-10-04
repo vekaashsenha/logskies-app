@@ -96,6 +96,8 @@ export function SiteFooter() {
           <Link href="/contact">Contact</Link>
           <Link href="/faq">FAQ</Link>
           <Link href="/privacy">Privacy</Link>
+          <Link href="/terms">Terms and Conditions</Link>
+          <a href="mailto:support@logskies.com">Support & privacy email</a>
         </div>
       </div>
       <div className="footer-bottom">

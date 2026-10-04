@@ -1,0 +1,9 @@
+# Legal pages and contact setup — 4 October 2026
+
+Public early-access Terms and Privacy Policy content: apps/web/src/components/legal-policy.tsx. The earlier markdown drafts are working material; public policy text supersedes them. Operator is Kalka Traders, trading as LogSkies. Address supplied by owner: First Floor, 3012, Green Field Colony, Faridabad, Haryana 121010, India. Privacy contact: Kritika, Founder.
+
+Cloudflare support@logskies.com is active. The private destination inbox is configured in Cloudflare, not public application code. Owner confirmed no other incoming domain addresses needed preserving and explicitly authorized replacement of Namecheap root MX/SPF. Resend auth-subdomain CNAME/DKIM and website CNAME records were preserved. End-to-end receiving test pending owner confirmation. Cloudflare forwarding is not a fully configured outbound business mailbox; branded replies need a separate sender/mailbox setup.
+
+Policies describe current behavior: hosted records have no automated expiry, privacy/deletion requests are manual, fixed backup-purge times are not promised, Tokyo hosting and technical providers are disclosed, and reports do not claim regulatory approval. Retention/deletion operations, backup expiry, statutory applicability and legal review remain launch work. Do not interpret these pages as independent legal certification.
+
+Web signup now requires a terms checkbox before creating an account; this checkbox is not yet a separately stored/versioned consent audit record. Existing users are not silently recorded as having accepted the new terms. Android account creation still opens the web workflow. Android source adds support, policies and account-deletion request links; requires installation of the next preview build. Opening mail links prepares a message through the user's email app; it does not send automatically.
