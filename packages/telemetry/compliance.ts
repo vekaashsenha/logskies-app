@@ -114,7 +114,7 @@ export function reviewChecks(flight: ParsedFlight, review: Review): Check[] {
     {
       name: "Reviewer sign-off",
       state: review.reviewed && review.reviewer.trim() ? "pass" : "pending",
-      detail: "Local reviewer declaration, not a digital signature.",
+      detail: "Operator reviewer declaration, not a digital signature.",
     },
     {
       name: "Official export format",
@@ -131,8 +131,8 @@ export function initialReview(flight: ParsedFlight): Review {
     pilotRpc: "",
     rpcIssuedOn: "",
     rpcExpiresOn: "",
-    purpose: "mapping_survey",
-    incidents: "Nil",
+    purpose: "",
+    incidents: "",
     takeoffUtc: flight.startUtc ?? "",
     landingUtc: flight.endUtc ?? "",
     timesConfirmed: false,

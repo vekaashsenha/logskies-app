@@ -90,6 +90,10 @@ test("Missing evidence cannot pass audit review; expired RPC and exceeded AGL fa
   const f = parseLog(read("synthetic-flight.bin"), "a.bin").flights[0];
   const review = initialReview(f);
   const missing = reviewChecks(f, review);
+  assert.equal(
+    missing.find((c) => c.name === "Mission & incident record")?.state,
+    "pending",
+  );
   assert.ok(
     missing.some(
       (c) => c.name === "Height above ground" && c.state === "pending",

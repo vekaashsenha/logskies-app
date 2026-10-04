@@ -1,6 +1,6 @@
 # Validation — updated 4 October 2026
 
-Current status supersedes historical entries below: apex/www custom-domain HTTPS works; custom SMTP is enabled and the user confirmed signup email delivery, confirmation, login and fleet persistence. Private flight originals and imported reviews are connected to Supabase. Hosted anonymous flight-import read/write probes pass. Android preview APK build is running; real-device testing and PDF download/pagination remain unverified.
+Current status supersedes historical entries below: apex/www custom-domain HTTPS works; custom SMTP is enabled and the user confirmed signup email delivery, confirmation, login and fleet persistence. Private flight originals and imported reviews are connected to Supabase. Hosted anonymous flight-import read/write probes pass. Android preview APK build finished successfully; real-device testing and PDF download/pagination remain unverified. Public-domain authenticated synthetic upload, battery assignment, save and history refresh passed (iima organization). Evidence: qa/public-flight-report.png.
 
 ## Authenticated Supabase workspace — 4 October 2026
 

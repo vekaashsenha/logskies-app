@@ -821,6 +821,7 @@ export default function FlightWorkbench({
                   value={draft.review.purpose}
                   onChange={(e) => review("purpose", e.target.value)}
                 >
+                  <option value="">Select mission purpose</option>
                   {purposes.map((purpose) => (
                     <option key={purpose}>{purpose}</option>
                   ))}
@@ -829,6 +830,7 @@ export default function FlightWorkbench({
               <label>
                 Incident / accident declaration
                 <input
+                  placeholder="Enter Nil or describe the occurrence"
                   maxLength={2000}
                   value={draft.review.incidents}
                   onChange={(e) => review("incidents", e.target.value)}

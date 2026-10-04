@@ -5,7 +5,9 @@ Build profile: `preview`, internal APK, public Supabase configuration in the pro
 
 Initial build: https://expo.dev/accounts/vekaashsenhas-team/projects/logskies/builds/402c89c6-9c4d-410f-a0e4-e0a316310af0
 
-TypeScript and Expo lint pass. A build submission is not a completed APK or a device test. Record the actual outcome below after installing the finished APK.
+Build status verified FINISHED on 4 October 2026. APK: https://expo.dev/artifacts/eas/I5Yfrg-Iqw1NU1sFWN7UPxzzTBFcaJguIj2KI_uzbbQ.apk
+
+TypeScript and Expo lint pass. Physical Android device testing remains pending. Record the actual outcome below after installing the finished APK.
 
 ## Device checks
 
