@@ -13,6 +13,8 @@ TypeScript and Expo lint pass. The user confirmed successful Android sign-in, we
 
 ## Device checks
 
+Legal/support-link preview submitted from commit 30837a0: https://expo.dev/accounts/vekaashsenhas-team/projects/logskies/builds/cc83580b-3967-4269-96a9-52793e452ff9 . Build completion and installation are pending; includes support/privacy email, Terms, Privacy Policy and account-deletion request links.
+
 1. Download the completed preview APK from the Expo build page and install it on a test Android phone. Record model and Android version. Internal distribution does not publish to Google Play.
 2. Sign in using the same confirmed LogSkies app account used on web. Confirm the expected organization, drone and battery load; another organization's data must not appear.
 3. Download a battery QR from the web workspace. Grant camera access on the phone, scan that QR and confirm the exact physical pack label. Deny camera access once and check manual selection still works.
