@@ -858,10 +858,10 @@ export function MoreScreen() {
         onPress={() => void w.openWeb()}
       />
       <Row
-        title="Company settings"
-        subtitle="Update your report logo and fleet on web"
+        title="Company & pilot profiles"
+        subtitle="Company name and shared pilot RPC records"
         icon="business-outline"
-        onPress={() => void w.openWeb()}
+        onPress={() => router.push("/profiles")}
       />
       <Heading>Help & privacy</Heading>
       <Row

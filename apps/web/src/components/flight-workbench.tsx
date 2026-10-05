@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import type { PilotProfile } from "@logskies/api";
 import {
   batteryStatus,
   csvCell,
@@ -69,6 +70,7 @@ export default function FlightWorkbench({
   store = localStore,
   drones,
   canEdit = true,
+  pilots = [],
 }: {
   batteries: Battery[];
   sessions: Session[];
@@ -78,6 +80,7 @@ export default function FlightWorkbench({
   store?: FlightStore;
   drones?: Drone[];
   canEdit?: boolean;
+  pilots?: PilotProfile[];
 }) {
   const [records, setRecords] = useState<FlightRecord[]>([]),
     [selected, setSelected] = useState(""),
@@ -816,6 +819,46 @@ export default function FlightWorkbench({
           <AirspaceReview key={draft.id} record={draft} onUpdate={setDraft} />
           <section className="panel form-grid no-print">
             <h2>Flight evidence review</h2>
+            {pilots.length > 0 && (
+              <label>
+                Fill from pilot profile
+                <select
+                  disabled={!canEdit}
+                  value=""
+                  onChange={(e) => {
+                    const p = pilots.find((p) => p.id === e.target.value);
+                    if (!p) return;
+                    setDraft((current) =>
+                      current
+                        ? {
+                            ...current,
+                            review: {
+                              ...current.review,
+                              pilotName: p.display_name,
+                              pilotRpc: p.rpc_number ?? "",
+                              rpcExpiresOn: p.rpc_expires_on ?? "",
+                              rpcIssuedOn: "",
+                              reviewed: false,
+                            },
+                          }
+                        : current,
+                    );
+                  }}
+                >
+                  <option value="">Choose a pilot to copy their details</option>
+                  {pilots.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.display_name}
+                    </option>
+                  ))}
+                </select>
+                <span className="muted">
+                  Check the certificate and issue date for this flight, then
+                  save the review. Existing reviews are unchanged until you
+                  select a profile.
+                </span>
+              </label>
+            )}
             <div className="form-row">
               <label>
                 Actual drone UIN

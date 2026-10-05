@@ -59,7 +59,28 @@ test("PostgreSQL policies isolate tenants and reject unauthorized writes", async
         [org],
       )
     ).rows[0].id;
+    const profile = (
+      await db.query(
+        "insert into public.pilot_profiles(org_id,display_name,rpc_number,rpc_expires_on) values($1,'Pilot A','RPC-TEST','2030-12-31') returning id",
+        [org],
+      )
+    ).rows[0].id;
     await actor(outsider);
+    assert.equal(
+      (
+        await db.query("select * from public.pilot_profiles where org_id=$1", [
+          org,
+        ])
+      ).rows.length,
+      0,
+    );
+    await assert.rejects(
+      db.query(
+        "insert into public.pilot_profiles(org_id,display_name) values($1,'Unauthorized')",
+        [org],
+      ),
+      /row-level security/,
+    );
     const other = (
       await db.query("select public.create_organization('Fleet B') as id")
     ).rows[0].id;
@@ -96,6 +117,35 @@ test("PostgreSQL policies isolate tenants and reject unauthorized writes", async
       [org, pilot],
     );
     await actor(pilot);
+    assert.equal(
+      (
+        await db.query(
+          "select display_name from public.pilot_profiles where id=$1",
+          [profile],
+        )
+      ).rows[0].display_name,
+      "Pilot A",
+    );
+    await db.query(
+      "update public.pilot_profiles set display_name='HACKED' where id=$1",
+      [profile],
+    );
+    assert.equal(
+      (
+        await db.query(
+          "select display_name from public.pilot_profiles where id=$1",
+          [profile],
+        )
+      ).rows[0].display_name,
+      "Pilot A",
+    );
+    await assert.rejects(
+      db.query(
+        "insert into public.pilot_profiles(org_id,display_name) values($1,'Unauthorized')",
+        [org],
+      ),
+      /row-level security/,
+    );
     assert.equal(
       (await db.query("select * from public.batteries")).rows.length,
       1,

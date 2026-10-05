@@ -1,5 +1,7 @@
 # Web and Android release consistency
 
+5 October 2026 profiles: shared pilot CRUD and company-name editing on web and Android 1.0.2; report pilot selection copies details into the review. Logo upload remains on web. Existing RLS applies; pilot records do not create accounts. See PROFILES.md for scope and remaining company/legal metadata. Native source is ahead of the prior 1.0.1 preview and requires a new APK.
+
 5 October 2026 Android layout redesign: Home/Fleet/Scan/Flights/More routes share the existing organization data. Preflight is a three-step flow, with manual battery selection, confirmation and explicit save success. Website FAQ describes the actual native/web boundaries. The new APK must be installed; older APKs keep their layout. See ANDROID-UI-REDESIGN.md for visual QA and remaining physical-device checks.
 
 For every feature change, review shared API/domain logic, web workspace, Android screens, report wording, marketing/solutions, integrations, FAQ, privacy and validation documents. Update each affected surface in the same change. Do not claim a feature is released on a platform until its artifact is available.

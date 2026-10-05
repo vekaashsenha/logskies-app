@@ -387,6 +387,12 @@ function useWorkspaceState() {
     resetPreflight,
     recordPreflight,
     selectOrg,
+    reloadOrgs: async () => {
+      if (!client) return;
+      const current = epoch.current;
+      const items = await listOrgs(client);
+      if (current === epoch.current) setOrgs(items);
+    },
     refresh: () => run(refresh),
     run,
     openWeb,

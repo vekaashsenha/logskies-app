@@ -19,6 +19,81 @@ export type Org = {
   name: string;
   logo_storage_path: string | null;
 };
+export type PilotProfile = {
+  id: string;
+  org_id: string;
+  display_name: string;
+  rpc_number: string | null;
+  rpc_expires_on: string | null;
+};
+export async function listPilots(
+  client: SupabaseClient,
+  orgId: string,
+): Promise<PilotProfile[]> {
+  const { data, error } = await client
+    .from("pilot_profiles")
+    .select("id,org_id,display_name,rpc_number,rpc_expires_on")
+    .eq("org_id", orgId)
+    .order("display_name");
+  if (error) throw error;
+  return data ?? [];
+}
+export async function savePilot(
+  client: SupabaseClient,
+  orgId: string,
+  input: {
+    id?: string;
+    display_name: string;
+    rpc_number: string;
+    rpc_expires_on: string;
+  },
+) {
+  const name = input.display_name.trim(),
+    rpc = input.rpc_number.trim(),
+    expiry = input.rpc_expires_on.trim();
+  if (!name || name.length > 120)
+    throw new Error("Enter a pilot name of 1–120 characters.");
+  if (rpc.length > 120)
+    throw new Error("RPC number must be at most 120 characters.");
+  if (
+    expiry &&
+    (!/^\d{4}-\d{2}-\d{2}$/.test(expiry) ||
+      !Number.isFinite(Date.parse(expiry)) ||
+      new Date(expiry).toISOString().slice(0, 10) !== expiry)
+  )
+    throw new Error("Enter a valid expiry date as YYYY-MM-DD.");
+  const values = {
+    display_name: name,
+    rpc_number: rpc || null,
+    rpc_expires_on: expiry || null,
+  };
+  const query = input.id
+    ? client
+        .from("pilot_profiles")
+        .update(values)
+        .eq("org_id", orgId)
+        .eq("id", input.id)
+    : client.from("pilot_profiles").insert({ ...values, org_id: orgId });
+  const { data, error } = await query.select("id").single();
+  if (error) throw error;
+  return data.id as string;
+}
+export async function renameOrg(
+  client: SupabaseClient,
+  orgId: string,
+  name: string,
+) {
+  const value = name.trim();
+  if (!value || value.length > 120)
+    throw new Error("Enter a company name of 1–120 characters.");
+  const { error } = await client
+    .from("organizations")
+    .update({ name: value })
+    .eq("id", orgId)
+    .select("id")
+    .single();
+  if (error) throw error;
+}
 export type FleetBattery = {
   id: string;
   org_id: string;

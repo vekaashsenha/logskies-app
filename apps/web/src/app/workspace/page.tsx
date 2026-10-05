@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import FlightWorkbench from "@/components/flight-workbench";
+import PilotProfiles from "@/components/pilot-profiles";
 import { cloudFlightStore } from "@/lib/cloud-flight-storage";
 import Link from "next/link";
 import Image from "next/image";
@@ -9,6 +10,8 @@ import {
   createClient,
   listOrgs,
   createOrg,
+  renameOrg,
+  type PilotProfile,
   loadFleet,
   addBattery,
   addDrone,
@@ -52,6 +55,8 @@ export default function Workspace() {
   const [logoRecord, setLogo] = useState({ path: "", url: "" });
   const [qrRecord, setQr] = useState({ batteryId: "", url: "" });
   const [canAdmin, setCanAdmin] = useState(false);
+  const [pilots, setPilots] = useState<PilotProfile[]>([]);
+  const [companyName, setCompanyName] = useState("");
   const activeOrg = orgs.find((o) => o.id === orgId);
   const flightStore = useMemo(
     () => (client && orgId ? cloudFlightStore(client, orgId) : undefined),
@@ -465,7 +470,7 @@ export default function Workspace() {
       )}
       <div className="two-columns no-print">
         <section className="panel form-grid">
-          <h2>Organization</h2>
+          <h2>Company profile</h2>
           {orgs.length > 0 && (
             <label>
               Active organization
@@ -517,6 +522,36 @@ export default function Workspace() {
               Create organization
             </button>
           </form>
+          {orgId && canAdmin && (
+            <form
+              className="form-grid"
+              onSubmit={(e) => {
+                e.preventDefault();
+                void run(async () => {
+                  await renameOrg(client, orgId, companyName);
+                  setOrgs(await listOrgs(client));
+                  setCompanyName("");
+                  setMessage(
+                    "Company name saved. New report exports use this name.",
+                  );
+                });
+              }}
+            >
+              <label>
+                Company / operator display name
+                <input
+                  required
+                  maxLength={120}
+                  placeholder={activeOrg?.name}
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                />
+              </label>
+              <button className="secondary" disabled={busy}>
+                Save company name
+              </button>
+            </form>
+          )}
           {orgId && canAdmin && (
             <label>
               Company report logo
@@ -710,6 +745,13 @@ export default function Workspace() {
       )}
       {orgId && (
         <>
+          <PilotProfiles
+            key={orgId + userId}
+            client={client}
+            orgId={orgId}
+            canAdmin={canAdmin}
+            onLoaded={setPilots}
+          />
           {flightStore && (
             <FlightWorkbench
               key={orgId + userId}
@@ -736,6 +778,7 @@ export default function Workspace() {
               }))}
               company={activeOrg?.name ?? ""}
               logo={logo}
+              pilots={pilots.filter((p) => p.org_id === orgId)}
             />
           )}
           <div className="actions no-print">

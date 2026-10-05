@@ -44,6 +44,7 @@ function Navigation() {
       <Stack.Protected guard={!!userId}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="flight/[id]" />
+        <Stack.Screen name="profiles" />
       </Stack.Protected>
     </Stack>
   );

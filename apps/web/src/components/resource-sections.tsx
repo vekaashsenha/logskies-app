@@ -148,6 +148,10 @@ export function KnowledgeHub() {
 }
 export const faqs = [
   [
+    "Where do I manage company and pilot profiles?",
+    "In the connected web workspace, use Company profile and Pilot profiles. Android version 1.0.2 adds Company & pilot profiles under More. Owners and admins can update the company name and add or edit pilot names, RPC numbers and expiry dates; other members can view them. Report logos are uploaded on web. Adding a pilot record does not create a login or invite a teammate. On web, select a pilot in a flight review to copy their details, then verify the original certificate and issue date before saving. Profiles are not credential verification. Company address, GST, contact fields and pilot invitations are not included yet.",
+  ],
+  [
     "Can I replay the recorded flight path?",
     "Yes. Import a supported log in the web workspace and use Flight path & telemetry to replay or scrub the observed positions alongside battery readings. The coordinate map uses recorded GPS points without external satellite imagery. Gaps over five seconds break the plotted line and stale values become Unknown; positions are not interpolated. Relative altitude is not verified AGL. Android opens the web workspace for this view; native replay and 3D terrain are not included.",
   ],
