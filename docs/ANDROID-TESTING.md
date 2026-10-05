@@ -1,5 +1,7 @@
 # Android preview validation
 
+5 October 2026 profile preview submitted from d40ddca, version 1.0.2 (3): https://expo.dev/accounts/vekaashsenhas-team/projects/logskies/builds/56e7462e-a75b-40c8-b69f-fbb76f09079e . Submission confirmed; build completion and installation have not been verified. Adds More → Company & pilot profiles. Validate admin saves, member read-only access, organization switching, RPC date errors, synchronization with web, report profile selection, and sign-out on Samsung Fold5 Android16.
+
 ## Latest layout build — 5 October 2026
 
 Version 1.0.1 (Android code 2), source commit `80e86f7`:
