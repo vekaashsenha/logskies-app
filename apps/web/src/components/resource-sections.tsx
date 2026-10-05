@@ -112,6 +112,7 @@ export const guides = [
       "Connect the autopilot to Mission Planner and open the DataFlash Logs tab in the DATA view.",
       "Choose Download DataFlash Log Via Mavlink and select the logs to download. Mission Planner saves them in its logs directory.",
       "Retain the original log. DataFlash logs are recorded onboard; .tlog files are recorded by the ground station over the telemetry connection.",
+      "After import, replay recorded positions and battery measurements together. The local coordinate map has no satellite basemap; gaps over five seconds break the path. First and last GPS observations do not independently prove takeoff and landing locations.",
     ],
     source:
       "https://ardupilot.org/planner/docs/common-downloading-and-analyzing-data-logs-in-mission-planner.html",
@@ -146,6 +147,10 @@ export function KnowledgeHub() {
   );
 }
 export const faqs = [
+  [
+    "Can I replay the recorded flight path?",
+    "Yes. Import a supported log in the web workspace and use Flight path & telemetry to replay or scrub the observed positions alongside battery readings. The coordinate map uses recorded GPS points without external satellite imagery. Gaps over five seconds break the plotted line and stale values become Unknown; positions are not interpolated. Relative altitude is not verified AGL. Android opens the web workspace for this view; native replay and 3D terrain are not included.",
+  ],
   [
     "What can a flight log tell me?",
     "A supported log can provide route observations, timing evidence and recorded battery voltage, current or consumed capacity. Available fields depend on the aircraft and recording settings. Missing GPS, incomplete flight boundaries and inconsistent clocks limit what can be established; a log alone does not certify battery airworthiness, identify a crash cause or prove regulatory compliance.",

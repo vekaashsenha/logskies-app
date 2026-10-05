@@ -39,7 +39,7 @@ export default function LegalPolicy({ kind }: { kind: "terms" | "privacy" }) {
           ],
           [
             "How we use information",
-            "We use information to authenticate users, control organization access, synchronize records, prepare reports, send confirmation/recovery emails, handle support/privacy requests and investigate security incidents. We do not sell uploaded flight logs or use them for advertising. Our current application code does not operate advertising tracking. Providers may process IP addresses, device/browser information and security logs.",
+              "We use information to authenticate users, control organization access, synchronize records, visualize recorded flight paths and telemetry, prepare reports, send confirmation/recovery emails, handle support/privacy requests and investigate security incidents. The flight coordinate map renders locally without sending route coordinates to an external map provider. We do not sell uploaded flight logs or use them for advertising. Our current application code does not operate advertising tracking. Providers may process IP addresses, device/browser information and security logs.",
           ],
           [
             "Access and service providers",

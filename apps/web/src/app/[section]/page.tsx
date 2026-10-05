@@ -76,6 +76,11 @@ const features = [
     "Available in the online workspace",
   ],
   [
+    "Recorded flight-path replay",
+    "Replay GPS observations on a local coordinate map with synchronized battery readings, a scrub timeline and visible data gaps. Android opens this view in the web workspace.",
+    "Available on the web · no 3D terrain",
+  ],
+  [
     "Battery health & audit evidence",
     "Review qualified capacity and voltage-sag estimates alongside a pass/fail/pending flight evidence checklist. Missing measurements remain unassessed.",
     "Local estimates and evidence review available",

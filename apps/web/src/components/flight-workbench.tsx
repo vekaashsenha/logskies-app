@@ -23,6 +23,7 @@ import {
   type FlightRecord,
 } from "@/lib/flight-storage";
 import AirspaceReview from "./airspace-review";
+import FlightReplay from "./flight-replay";
 const droneIdentity = "demo-drone-01";
 const localStore = { listFlights, saveFlights, readSource };
 export type FlightStore = typeof localStore;
@@ -536,7 +537,15 @@ export default function FlightWorkbench({
                 system: {draft.systemId ?? "N/A"}
               </p>
             </details>
-            <TelemetryPlot record={draft} />
+            {reportBlocked ? (
+              <p>Re-import this log to validate timing before replay.</p>
+            ) : (
+              <FlightReplay
+                key={`${draft.id}-${draft.healthInputs.instance}`}
+                flight={draft.flight}
+                instance={draft.healthInputs.instance}
+              />
+            )}
           </section>
           <section className="panel form-grid no-print">
             <h2>Battery matching & health estimate</h2>
@@ -1033,6 +1042,12 @@ export default function FlightWorkbench({
                 Official eGCA format acceptance remains unverified. This record
                 does not establish regulatory compliance.
               </div>
+              <FlightReplay
+                key={`report-${draft.id}-${draft.healthInputs.instance}`}
+                flight={draft.flight}
+                instance={draft.healthInputs.instance}
+                printable
+              />
               <h3>Mission record</h3>
               <table>
                 <tbody>
@@ -1179,56 +1194,6 @@ export default function FlightWorkbench({
           )}
         </>
       )}
-    </div>
-  );
-}
-function TelemetryPlot({ record }: { record: FlightRecord }) {
-  const samples = record.flight.batteries.filter(
-    (sample) =>
-      sample.instance === record.healthInputs.instance &&
-      sample.voltage !== null,
-  );
-  if (samples.length < 2)
-    return <p>No voltage series available for this channel.</p>;
-  const values = samples.map((sample) => sample.voltage!);
-  const min = values.reduce((a, b) => Math.min(a, b), Infinity),
-    max = values.reduce((a, b) => Math.max(a, b), -Infinity);
-  const stride = Math.max(1, Math.ceil(samples.length / 1000));
-  const points = samples
-    .filter((_, i) => i % stride === 0 || i === samples.length - 1)
-    .map(
-      (sample) =>
-        `${35 + ((sample.t - record.flight.start) / Math.max(1, record.flight.end - record.flight.start)) * 720},${170 - ((sample.voltage! - min) / Math.max(0.1, max - min)) * 130}`,
-    )
-    .join(" ");
-  return (
-    <div className="telemetry-plot">
-      <h3>Pack voltage over the interval</h3>
-      <svg
-        viewBox="0 0 800 200"
-        role="img"
-        aria-label="Measured battery voltage over time"
-      >
-        <title>Measured voltage, channel {record.healthInputs.instance}</title>
-        <path d="M35 25V175H765" fill="none" stroke="#DEE2E6" />
-        <polyline
-          points={points}
-          fill="none"
-          stroke="#5C8A2B"
-          strokeWidth="2"
-        />
-        <text x="40" y="20">
-          {max.toFixed(2)} V
-        </text>
-        <text x="40" y="195">
-          {min.toFixed(2)} V · {record.flight.durationMinutes.toFixed(2)}{" "}
-          minutes
-        </text>
-      </svg>
-      <small>
-        Plot samples may be reduced for display; all imported observations are
-        retained.
-      </small>
     </div>
   );
 }
