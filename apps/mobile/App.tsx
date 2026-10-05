@@ -222,8 +222,10 @@ function DemoApp() {
           )}
         </View>
         <Text style={styles.muted}>
-          Branded report generation on Android will use the shared reporting
-          service. The web prototype already includes the draft PDF preview.
+          The online app shows shared flight summaries and opens web reports.
+          Import .bin, .tlog or .ulg files and review airspace, occurrence and
+          notification evidence in the web workspace. This demo stores preflight
+          sessions only on this device.
         </Text>
       </ScrollView>
     </View>

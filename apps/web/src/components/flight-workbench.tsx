@@ -14,7 +14,9 @@ import { estimateHealth } from "@logskies/telemetry/health";
 import {
   initialReview,
   reviewChecks,
+  regulatoryEvidenceRows,
   type Review,
+  type EvidenceAttachment,
 } from "@logskies/telemetry/compliance";
 import {
   listFlights,
@@ -24,6 +26,7 @@ import {
 } from "@/lib/flight-storage";
 import AirspaceReview from "./airspace-review";
 import FlightReplay from "./flight-replay";
+import RegulatoryEvidence from "./regulatory-evidence";
 const droneIdentity = "demo-drone-01";
 const localStore = { listFlights, saveFlights, readSource };
 export type FlightStore = typeof localStore;
@@ -85,6 +88,8 @@ export default function FlightWorkbench({
     [sourceDrone, setSourceDrone] = useState(
       drones?.[0]?.id ?? (drones ? "" : droneIdentity),
     );
+  const [attachmentKind, setAttachmentKind] =
+    useState<EvidenceAttachment["kind"]>("permission");
   useEffect(() => {
     let active = true;
     store
@@ -156,11 +161,11 @@ export default function FlightWorkbench({
       return;
     }
     if (
-      !/\.(bin|tlog)$/i.test(file.name) ||
+      !/\.(bin|tlog|ulg)$/i.test(file.name) ||
       file.size === 0 ||
       file.size > 50 * 1024 * 1024
     ) {
-      setMessage("Choose a nonempty .bin or .tlog file under 50 MB.");
+      setMessage("Choose a nonempty .bin, .tlog or .ulg file under 50 MB.");
       return;
     }
     if (
@@ -272,7 +277,7 @@ export default function FlightWorkbench({
       setDraft(imported[0]);
       setMessage(
         parsed.messages +
-          " supported messages processed; " +
+          " data messages processed; " +
           imported.length +
           (drones
             ? " interval(s) saved to your organization with the private original source. Review flight boundaries and evidence."
@@ -299,6 +304,67 @@ export default function FlightWorkbench({
       );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Unable to save.");
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function attachEvidence(file?: File) {
+    if (!file || !draft || busy || !canEdit) return;
+    if (
+      file.size === 0 ||
+      file.size > 5 * 1024 * 1024 ||
+      (draft.review.attachments ?? []).length >= 10
+    ) {
+      setMessage("Attach up to 10 PDF, PNG or JPEG files, each under 5 MB.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const buffer = await file.arrayBuffer(),
+        bytes = new Uint8Array(buffer);
+      const pdf = new TextDecoder().decode(bytes.subarray(0, 5)) === "%PDF-";
+      const png = [137, 80, 78, 71, 13, 10, 26, 10].every(
+        (b, i) => bytes[i] === b,
+      );
+      const jpeg = bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255;
+      if (!(
+        (pdf && /\.pdf$/i.test(file.name)) ||
+        (png && /\.png$/i.test(file.name)) ||
+        (jpeg && /\.jpe?g$/i.test(file.name))
+      ))
+        throw new Error("Choose a genuine PDF, PNG or JPEG evidence file.");
+      const hash = Array.from(
+        new Uint8Array(await crypto.subtle.digest("SHA-256", buffer)),
+      )
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+      if ((draft.review.attachments ?? []).some((v) => v.hash === hash))
+        throw new Error("This evidence file is already attached.");
+      const updated = {
+        ...draft,
+        review: {
+          ...draft.review,
+          attachments: [
+            ...(draft.review.attachments ?? []),
+            {
+              hash,
+              filename: file.name,
+              bytes: file.size,
+              kind: attachmentKind,
+            },
+          ],
+        },
+      };
+      await store.saveFlights([updated], { hash, buffer, filename: file.name });
+      setDraft(updated);
+      setRecords(records.map((v) => (v.id === updated.id ? updated : v)));
+      setMessage(
+        "Review and supporting evidence saved privately. Attachment content is not authenticated by LogSkies.",
+      );
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Attachment save failed.",
+      );
     } finally {
       setBusy(false);
     }
@@ -377,6 +443,9 @@ export default function FlightWorkbench({
         draft.parserVersion,
       ],
     ];
+    const evidence = regulatoryEvidenceRows(draft.review);
+    rows[0].push(...evidence.map(([label]) => label));
+    rows[1].push(...evidence.map(([, value]) => value));
     return (
       "data:text/csv;charset=utf-8," +
       encodeURIComponent(
@@ -390,7 +459,8 @@ export default function FlightWorkbench({
         <section className="panel form-grid no-print">
           <h2>Import a real flight log</h2>
           <p className="muted">
-            ArduPilot DataFlash .bin and supported MAVLink .tlog messages.
+            ArduPilot .bin, MAVLink .tlog and PX4 .ulg position/battery
+            evidence.
             {drones
               ? "Parsing runs on your device; original logs and review records are saved privately to your organization."
               : "Processing and original-file storage stay in this browser."}{" "}
@@ -436,7 +506,7 @@ export default function FlightWorkbench({
             <input
               disabled={busy}
               type="file"
-              accept=".bin,.tlog"
+              accept=".bin,.tlog,.ulg"
               onChange={(e) => {
                 importFile(e.target.files?.[0]);
                 e.target.value = "";
@@ -499,7 +569,7 @@ export default function FlightWorkbench({
         ) : (
           <p>
             No real logs imported yet. Open Flight logs to import a .bin or
-            .tlog.
+            .tlog or .ulg.
           </p>
         )}
       </section>
@@ -921,6 +991,10 @@ export default function FlightWorkbench({
                 />
               </label>
             </div>
+            <RegulatoryEvidence
+              value={draft.review}
+              onChange={(value) => setDraft({ ...draft, review: value })}
+            />
             <label>
               Complete-route airspace review evidence
               <input
@@ -1006,6 +1080,73 @@ export default function FlightWorkbench({
               Download original log
             </button>
           </div>
+          <section className="panel form-grid no-print">
+            <h3>Supporting evidence files</h3>
+            <p className="muted">
+              Attach permission documents, airspace checks or notification
+              receipts. Files stay private to this organization (or this browser
+              in the demo). Keep originals; a fingerprint does not verify
+              document authenticity.
+            </p>
+            {canEdit && !reportOnly && (
+              <div className="form-row">
+                <label>
+                  Evidence category
+                  <select
+                    value={attachmentKind}
+                    onChange={(e) =>
+                      setAttachmentKind(
+                        e.target.value as EvidenceAttachment["kind"],
+                      )
+                    }
+                  >
+                    <option value="permission">Permission</option>
+                    <option value="airspace">Airspace check</option>
+                    <option value="occurrence">
+                      Occurrence / notification
+                    </option>
+                  </select>
+                </label>
+                <label>
+                  Attach PDF, PNG or JPEG (5 MB maximum)
+                  <input
+                    type="file"
+                    accept=".pdf,.png,.jpg,.jpeg"
+                    disabled={busy}
+                    onChange={(e) => {
+                      void attachEvidence(e.target.files?.[0]);
+                      e.target.value = "";
+                    }}
+                  />
+                </label>
+              </div>
+            )}
+            {(draft.review.attachments ?? []).map((file) => (
+              <div key={file.hash} className="actions">
+                <span>
+                  {file.kind}: {file.filename}
+                </span>
+                <button
+                  className="secondary"
+                  onClick={async () => {
+                    try {
+                      const source = await store.readSource(file.hash);
+                      download(new Blob([source.buffer]), file.filename);
+                      setMessage("Evidence download requested.");
+                    } catch (error) {
+                      setMessage(
+                        error instanceof Error
+                          ? error.message
+                          : "Evidence retrieval failed.",
+                      );
+                    }
+                  }}
+                >
+                  Download evidence file
+                </button>
+              </div>
+            ))}
+          </section>
           {reportBlocked ? (
             <p role="alert">
               Report blocked: re-import the original log with the updated clock
@@ -1130,6 +1271,7 @@ export default function FlightWorkbench({
                         display(health.maxCurrent) +
                         " A",
                     ],
+                    ...regulatoryEvidenceRows(draft.review),
                   ].map(([label, value]) => (
                     <tr key={label}>
                       <th scope="row">{label}</th>

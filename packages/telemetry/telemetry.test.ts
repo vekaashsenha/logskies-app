@@ -155,6 +155,7 @@ test("Missing evidence cannot pass audit review; expired RPC and exceeded AGL fa
     verifiedAglMeters: 121,
     applicableCeiling: 120,
     altitudeEvidence: "TEST",
+    airspaceCheck:{...review.airspaceCheck!,context:"general_green"},
   });
   assert.equal(
     checks.find((c) => c.name === "Pilot credentials")?.state,

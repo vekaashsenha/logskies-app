@@ -35,11 +35,11 @@ export default function LegalPolicy({ kind }: { kind: "terms" | "privacy" }) {
       : [
           [
             "Information we process",
-            "Account data includes email, authentication identifiers and sessions. Fleet records include organization names/logos, membership roles, drones/UINs, battery tags/specifications and preflight associations. Uploaded logs can contain precise flight coordinates, timestamps, aircraft identifiers and battery telemetry. Reviews may contain pilot/RPC details, permission references, incidents and reviewer names. Upload only information necessary for your operations. Support email processes messages and attachments you send.",
+            "Account data includes email, authentication identifiers and sessions. Fleet records include organization names/logos, membership roles, drones/UINs, battery tags/specifications and preflight associations. Uploaded logs, including PX4 ULog originals, can contain precise coordinates, timestamps, identifiers and diagnostic telemetry. Reviews and private supporting files may contain pilot/RPC details, permissions, incident locations, injury/damage descriptions, authority notification receipts and reviewer names. Avoid unnecessary third-party personal or medical details. Upload only information necessary for your operations. Saving an occurrence does not notify authorities. Support email processes messages and attachments you send.",
           ],
           [
             "How we use information",
-              "We use information to authenticate users, control organization access, synchronize records, visualize recorded flight paths and telemetry, prepare reports, send confirmation/recovery emails, handle support/privacy requests and investigate security incidents. The flight coordinate map renders locally without sending route coordinates to an external map provider. We do not sell uploaded flight logs or use them for advertising. Our current application code does not operate advertising tracking. Providers may process IP addresses, device/browser information and security logs.",
+            "We use information to authenticate users, control organization access, synchronize records, visualize recorded flight paths and telemetry, prepare reports, send confirmation/recovery emails, handle support/privacy requests and investigate security incidents. The flight coordinate map renders locally without sending route coordinates to an external map provider. We do not sell uploaded flight logs or use them for advertising. Our current application code does not operate advertising tracking. Providers may process IP addresses, device/browser information and security logs.",
           ],
           [
             "Access and service providers",
@@ -60,7 +60,7 @@ export default function LegalPolicy({ kind }: { kind: "terms" | "privacy" }) {
         ];
   return (
     <section className="public-section public-container guide-article">
-      <p>Effective: 4 October 2026 · Early-access service</p>
+      <p>Effective: 5 October 2026 · Early-access service</p>
       <h2>Operator and contact</h2>
       <p>
         {operator}. First Floor, 3012, Green Field Colony, Faridabad, Haryana

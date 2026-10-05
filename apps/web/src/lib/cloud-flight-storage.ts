@@ -53,7 +53,7 @@ export function cloudFlightStore(
         throw new Error(
           "Original log fingerprint mismatch. Do not use this file as evidence.",
         );
-      return { buffer, filename: `${hash}.bin` };
+      return { buffer, filename: `${hash}.source` };
     },
   };
 }

@@ -72,7 +72,7 @@ const features = [
   ],
   [
     "Telemetry processing",
-    "Parse supported .bin and .tlog files on your device, save private organization flight history and reconcile battery associations.",
+    "Parse supported .bin, .tlog and .ulg files on your device, save private organization flight history and reconcile battery associations.",
     "Available in the online workspace",
   ],
   [
@@ -293,7 +293,7 @@ export default async function Section({
                 ],
                 [
                   "Operational permissions",
-                  "Applicable airspace restrictions across the flight route, with permission references.",
+                  "Dated full-route and temporary-restriction checks, permission authority and private supporting documents.",
                 ],
                 [
                   "Pilot & reviewer",

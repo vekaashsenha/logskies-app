@@ -131,7 +131,7 @@ export function WorkflowDemo() {
             <h3>Ingest telemetry</h3>
             <p>
               Try this simulated preview, or import a real supported .bin or
-              .tlog in the dashboard.
+              .tlog / .ulg in the dashboard.
             </p>
             <button
               className="demo-dropzone"
@@ -224,7 +224,7 @@ const rows = [
     "Local map review",
   ],
   [
-    "Telemetry ingestion (.bin / .tlog)",
+    "Telemetry ingestion (.bin / .tlog / .ulg)",
     "Local import",
     "Local import",
     "Local import",

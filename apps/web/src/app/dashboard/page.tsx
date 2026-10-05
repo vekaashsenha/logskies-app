@@ -253,7 +253,7 @@ export default function Home() {
                 <Metric
                   label="Flight log processing"
                   value="Available"
-                  note="Import .bin / .tlog under Flight logs"
+                  note="Import .bin / .tlog / .ulg under Flight logs"
                 />
                 <Metric
                   label="Audit readiness"

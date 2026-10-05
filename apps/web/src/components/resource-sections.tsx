@@ -23,7 +23,7 @@ const integrations = [
   [
     "Pixhawk & PX4",
     "Autopilot ecosystem",
-    "ArduPilot .bin and supported MAVLink .tlog formats can be imported. Logs mixing aircraft boot time with capture UTC are rejected; older MAVLink imports must be re-imported before report export. Armed intervals are timing proxies, not confirmed takeoff and landing. PX4 .ulg files are not supported yet.",
+    "PX4 .ulg imports summarize supported position, battery and actuator-arming topics. Diagnostic-only logs may have no route or battery data. Appended crash data is rejected for specialist review. Arming bounds are timing proxies; retain the original and validate your aircraft's logs.",
     "Compatibility depends on format",
   ],
   [
@@ -193,7 +193,15 @@ export const faqs = [
   ],
   [
     "Which flight logs can I import?",
-    "The online workspace and local demo accept ArduPilot DataFlash .bin and supported MAVLink .tlog files up to 50 MB. PX4 .ulg files are not supported yet. Available measurements depend on the source log; customer logs still need validation.",
+    "The online workspace and local demo accept ArduPilot .bin, supported MAVLink .tlog and PX4 .ulg files up to 50 MB. ULog imports summarize supported position/battery/arming topics; diagnostic-only files may have none. Unknown forensic topics remain in the original. Customer flight logs still need validation.",
+  ],
+  [
+    "Does LogSkies provide flight permission or current DigitalSky restrictions?",
+    "No. Check the official DigitalSky map before flight, including the full intended route, vertical limits and temporary restrictions. Record the check time, source and permission evidence. Yellow requires ATC permission; red requires Central Government permission. A general green-zone ceiling is 120 m, with a 60 m green-zone limit in the 8–12 km operational-airport band. Uploaded regional maps are evidence, not a live authoritative feed.",
+  ],
+  [
+    "Does saving an incident report notify DGCA or AAIB?",
+    "No. For covered occurrences, the 2025 investigation rules require notification as soon as reasonably practicable, no later than 24 hours after awareness. Accidents/serious incidents in India also require local authority information. Drone Rules separately specify accident reporting within 48 hours of occurrence. Verify applicability and official channels, notify promptly without waiting for a complete report, and retain receipts. LogSkies stores operator-entered classification, notification evidence and supporting files; it does not submit notifications or determine the official classification.",
   ],
   [
     "Where are imported flight records stored?",

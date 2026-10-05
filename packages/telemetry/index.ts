@@ -1,4 +1,5 @@
 import schemaJson from "./mavlink-schema.json" with { type: "json" };
+import { parseULog } from "./ulog.ts";
 export const PARSER_VERSION = "logskies-browser-1.1";
 export type Point = {
   t: number;
@@ -30,7 +31,7 @@ export type ParsedFlight = {
   warnings: string[];
 };
 export type ParsedLog = {
-  format: "DataFlash" | "MAVLink";
+  format: "DataFlash" | "MAVLink" | "ULog";
   parserVersion: string;
   messages: number;
   systemId: number | null;
@@ -537,13 +538,14 @@ export function parseLog(
   if (buffer.byteLength === 0 || buffer.byteLength > 50 * 1024 * 1024)
     throw new Error("Choose a nonempty log under 50 MB.");
   const bytes = new Uint8Array(buffer);
+  if (filename.toLowerCase().endsWith(".ulg")) return parseULog(bytes);
   const format = filename.toLowerCase().endsWith(".bin")
     ? "DataFlash"
     : filename.toLowerCase().endsWith(".tlog")
       ? "MAVLink"
       : null;
   if (!format)
-    throw new Error("Supported files: ArduPilot .bin or MAVLink .tlog.");
+    throw new Error("Supported files: ArduPilot .bin, MAVLink .tlog or PX4 .ulg.");
   const decoded =
     format === "DataFlash" ? readDataFlash(bytes) : readMavlink(bytes);
   const systems = [...new Set(decoded.rows.map((row) => row.system))];

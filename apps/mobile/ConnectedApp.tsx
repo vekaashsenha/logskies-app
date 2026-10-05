@@ -516,7 +516,9 @@ export default function ConnectedApp() {
                   <Text style={s.heading}>Flight Operations Reports</Text>
                   <Text style={s.muted}>
                     Shared imported evidence, subject to operator review. Import
-                    logs and print branded reports in the web workspace.
+                    .bin, .tlog or .ulg logs and print branded reports in the
+                    web workspace. Airspace checks and notification evidence are
+                    operator-reviewed; LogSkies does not notify authorities.
                   </Text>
                   {flights.map((flight) => (
                     <View key={flight.id} style={s.history}>
@@ -525,6 +527,25 @@ export default function ConnectedApp() {
                         {Number(flight.duration).toFixed(2)} minutes ·{" "}
                         {flight.purpose || "Purpose not set"}
                       </Text>
+                      <Text style={s.muted}>
+                        {flight.format || "Telemetry"} · Occurrence:{" "}
+                        {flight.occurrence_type || "Not declared"}
+                      </Text>
+                      <Text style={s.muted}>
+                        Airspace check:{" "}
+                        {flight.airspace_checked_utc || "Evidence pending"}
+                      </Text>
+                      {flight.occurrence_type &&
+                        !["nil", "unknown"].includes(
+                          flight.occurrence_type,
+                        ) && (
+                          <Text style={s.text}>
+                            Review notifications promptly. For covered
+                            occurrences: as soon as reasonably practicable, no
+                            later than 24 hours after awareness. Open web
+                            reports for evidence and receipts.
+                          </Text>
+                        )}
                     </View>
                   ))}
                   {!flights.length && (

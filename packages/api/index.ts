@@ -152,6 +152,9 @@ export function errorMessage(error: unknown) {
       : "Operation failed. Please try again.";
 }
 export type FlightSummary = {
+  format?: string;
+  occurrence_type?: string | null;
+  airspace_checked_utc?: string | null;
   id: string;
   drone_id: string;
   battery_id: string | null;
@@ -168,7 +171,7 @@ export async function listFlightSummaries(
   const { data, error } = await client
     .from("flight_imports")
     .select(
-      "id,drone_id,battery_id,created_at,filename:record->>filename,purpose:record->review->>purpose,duration:record->flight->durationMinutes,start_utc:record->flight->>startUtc",
+      "id,drone_id,battery_id,created_at,filename:record->>filename,format:record->>format,occurrence_type:record->review->occurrence->>type,airspace_checked_utc:record->review->airspaceCheck->>checkedAtUtc,purpose:record->review->>purpose,duration:record->flight->durationMinutes,start_utc:record->flight->>startUtc",
     )
     .eq("org_id", orgId)
     .or(
