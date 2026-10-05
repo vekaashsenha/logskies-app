@@ -161,7 +161,11 @@ export const faqs = [
   ],
   [
     "How do I reset my password on web or Android?",
-    "Enter your account email on the sign-in screen and select Forgot password. Open the reset email in your browser, choose and confirm a new password, then use it on both web and Android. The reset action is included in the next Android preview; older APKs can use the website sign-in screen. Never share your password or reset link.",
+    "Enter your account email on the sign-in screen and select Forgot password. Open the reset email in your browser, choose and confirm a new password, then use it on both web and Android. Current Android previews include this action; older APKs can use the website sign-in screen. Never share your password or reset link.",
+  ],
+  [
+    "How is the Android app organized?",
+    "The redesigned Android preview uses Home, Fleet, Scan, Flights and More. Search drones and batteries in Fleet, then use Scan to choose a drone, scan or manually select a battery, review the association and save a preflight session online. Flights separates imported intervals from preflight sessions; More contains organization selection, reports, help and account actions. Fleet editing, log imports and full report review remain on web. Install the updated APK to receive the redesigned layout; phone validation is still required.",
   ],
   [
     "What can I use in the online workspace today?",

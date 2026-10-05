@@ -1,39 +1,41 @@
 import "react-native-url-polyfill/auto";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Alert,
-  AppState,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type PropsWithChildren,
+} from "react";
+import { AppState, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { CameraView, useCameraPermissions } from "expo-camera";
-import { randomUUID } from "expo-crypto";
 import * as Linking from "expo-linking";
-import { StatusBar } from "expo-status-bar";
+import { randomUUID } from "expo-crypto";
 import {
   createClient,
   listOrgs,
   loadFleet,
-  savePreflight,
-  errorMessage,
-  requestPasswordReset,
   listFlightSummaries,
-  type FlightSummary,
-  type Org,
+  savePreflight,
+  requestPasswordReset,
+  errorMessage,
   type FleetBattery,
   type FleetDrone,
+  type FlightSummary,
+  type Org,
   type Preflight,
 } from "@logskies/api";
 import { parseBatteryQr } from "@logskies/domain";
-const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const key = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+// Development-only browser fixtures. Never authenticate or call Supabase in this preview.
+const preview =
+  __DEV__ &&
+  Platform.OS === "web" &&
+  process.env.EXPO_PUBLIC_UI_PREVIEW === "1";
+const url = process.env.EXPO_PUBLIC_SUPABASE_URL,
+  key = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 export const connectedClient =
-  url && key
+  !preview && url && key
     ? createClient(url, key, {
         auth: {
           storage: AsyncStorage,
@@ -43,72 +45,164 @@ export const connectedClient =
         },
       })
     : null;
-export default function ConnectedApp() {
-  const client = connectedClient!;
-  const [userId, setUserId] = useState<string | null>(null);
-  const [ready, setReady] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState("");
-  const [orgs, setOrgs] = useState<Org[]>([]);
-  const [orgId, setOrgId] = useState("");
-  const [batteries, setBatteries] = useState<FleetBattery[]>([]);
-  const [drones, setDrones] = useState<FleetDrone[]>([]);
-  const [sessions, setSessions] = useState<Preflight[]>([]);
-  const [flights, setFlights] = useState<FlightSummary[]>([]);
-  const [batteryId, setBatteryId] = useState("");
-  const [droneId, setDroneId] = useState("");
-  const [manual, setManual] = useState("");
-  const [scanning, setScanning] = useState(false);
-  const [permission, requestPermission] = useCameraPermissions();
-  const scanLock = useRef(false);
-  const actionLock = useRef(false);
-  const authEpoch = useRef(0);
-  const [authGeneration, setAuthGeneration] = useState(0);
+const demoOrg: Org = {
+  id: "ui-preview",
+  name: "Example Flight Team",
+  logo_storage_path: null,
+};
+const demoDrones: FleetDrone[] = [
+  {
+    id: "demo-drone-1",
+    org_id: demoOrg.id,
+    model_name: "Agriculture drone",
+    uin_number: "EXAMPLE-UIN-01",
+  },
+  {
+    id: "demo-drone-2",
+    org_id: demoOrg.id,
+    model_name: "Survey drone",
+    uin_number: null,
+  },
+];
+const demoBatteries: FleetBattery[] = [
+  {
+    id: "demo-battery-1",
+    org_id: demoOrg.id,
+    asset_tag: "BATT-AG-001",
+    capacity_mah: 16000,
+    chemistry: "LiPo",
+    cell_count: 6,
+  },
+  {
+    id: "demo-battery-2",
+    org_id: demoOrg.id,
+    asset_tag: "BATT-AG-002",
+    capacity_mah: 16000,
+    chemistry: "LiPo",
+    cell_count: 6,
+  },
+  {
+    id: "demo-battery-3",
+    org_id: demoOrg.id,
+    asset_tag: "BATT-SV-003",
+    capacity_mah: 8000,
+    chemistry: "Li-Ion",
+    cell_count: 6,
+  },
+];
+const demoFlights: FlightSummary[] = [
+  {
+    id: "demo-flight",
+    drone_id: demoDrones[0].id,
+    battery_id: demoBatteries[0].id,
+    created_at: "2026-10-05T04:30:00Z",
+    filename: "EXAMPLE — agriculture-flight.bin",
+    format: "DataFlash",
+    purpose: "agriculture_spraying",
+    duration: 24,
+    start_utc: "2026-10-05T04:00:00Z",
+    occurrence_type: "unknown",
+    airspace_checked_utc: null,
+  },
+];
+function useWorkspaceState() {
+  const client = connectedClient;
+  const [ready, setReady] = useState(preview || !client),
+    [userId, setUserId] = useState<string | null>(
+      preview ? "preview-user" : null,
+    );
+  const [orgs, setOrgs] = useState<Org[]>(preview ? [demoOrg] : []),
+    [orgId, setOrgId] = useState(preview ? demoOrg.id : "");
+  const [batteries, setBatteries] = useState<FleetBattery[]>(
+      preview ? demoBatteries : [],
+    ),
+    [drones, setDrones] = useState<FleetDrone[]>(preview ? demoDrones : []);
+  const [flights, setFlights] = useState<FlightSummary[]>(
+      preview ? demoFlights : [],
+    ),
+    [sessions, setSessions] = useState<Preflight[]>([]);
+  const [loading, setLoading] = useState(false),
+    [busy, setBusy] = useState(false),
+    [message, setMessage] = useState(""),
+    [isError, setIsError] = useState(false);
+  const [authGeneration, setAuthGeneration] = useState(0),
+    epoch = useRef(0),
+    lock = useRef(false);
+  const [batteryId, setBatteryId] = useState(""),
+    [droneId, setDroneId] = useState(""),
+    [scannedAt, setScannedAt] = useState("");
+  const eventId = useRef<string | null>(null),
+    [savedSession, setSavedSession] = useState(false);
+  const [preflightRevision, setPreflightRevision] = useState(0);
+  const resetPreflight = useCallback(() => {
+    setPreflightRevision((value) => value + 1);
+    setBatteryId("");
+    setDroneId("");
+    setScannedAt("");
+    eventId.current = null;
+    setSavedSession(false);
+  }, []);
+  const clearPrivate = useCallback(() => {
+    setOrgs([]);
+    setOrgId("");
+    setBatteries([]);
+    setDrones([]);
+    setFlights([]);
+    setSessions([]);
+    resetPreflight();
+    setMessage("");
+    setLoading(false);
+  }, [resetPreflight]);
   useEffect(() => {
-    let mounted = true;
-    client.auth.getSession().then(({ data, error }) => {
-      if (mounted) {
-        if (error) setMessage(error.message);
+    if (!client) return;
+    let active = true,
+      authChanged = false;
+    client.auth
+      .getSession()
+      .then(({ data, error }) => {
+        if (!active || authChanged) return;
         setUserId(data.session?.user.id ?? null);
+        setLoading(!!data.session);
         setReady(true);
-      }
-    });
-    const auth = client.auth.onAuthStateChange((_event, session) => {
-      if (mounted) {
-        if (_event === "SIGNED_IN" || _event === "SIGNED_OUT") {
-          authEpoch.current++;
-          setAuthGeneration((value) => value + 1);
-          setOrgs([]);
-          setOrgId("");
-          setBatteries([]);
-          setDrones([]);
-          setSessions([]);
-          setFlights([]);
-          setBatteryId("");
-          setDroneId("");
-          setPassword("");
-          setScanning(false);
+        if (error) {
+          setMessage(error.message);
+          setIsError(true);
         }
-        setUserId(session?.user.id ?? null);
-        setReady(true);
+      })
+      .catch((e) => {
+        if (active) {
+          setMessage(errorMessage(e));
+          setIsError(true);
+          setReady(true);
+        }
+      });
+    const auth = client.auth.onAuthStateChange((event, session) => {
+      if (!active) return;
+      authChanged = true;
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+        epoch.current++;
+        clearPrivate();
+        setLoading(!!session);
+        setAuthGeneration((v) => v + 1);
       }
+      setUserId(session?.user.id ?? null);
+      setReady(true);
     });
     if (AppState.currentState === "active") client.auth.startAutoRefresh();
-    const state = AppState.addEventListener("change", (s) => {
-      if (s === "active") client.auth.startAutoRefresh();
-      else client.auth.stopAutoRefresh();
-    });
+    const subscription = AppState.addEventListener("change", (state) =>
+      state === "active"
+        ? client.auth.startAutoRefresh()
+        : client.auth.stopAutoRefresh(),
+    );
     return () => {
-      mounted = false;
+      active = false;
       auth.data.subscription.unsubscribe();
-      state.remove();
+      subscription.remove();
       client.auth.stopAutoRefresh();
     };
-  }, [client]);
+  }, [client, clearPrivate]);
   useEffect(() => {
-    if (!userId) return;
+    if (!client || !userId) return;
     let cancelled = false;
     listOrgs(client)
       .then((items) => {
@@ -118,518 +212,227 @@ export default function ConnectedApp() {
         }
       })
       .catch((e) => {
-        if (!cancelled) setMessage(errorMessage(e));
+        if (!cancelled) {
+          setMessage(errorMessage(e));
+          setIsError(true);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
       });
     return () => {
       cancelled = true;
     };
   }, [client, userId, authGeneration]);
   const refresh = useCallback(async () => {
-    if (!orgId) return;
-    const epoch = authEpoch.current;
-    const [data, flightData] = await Promise.all([
-      loadFleet(client, orgId),
-      listFlightSummaries(client, orgId),
-    ]);
-    if (epoch !== authEpoch.current) return;
-    setBatteries(data.batteries);
-    setDrones(data.drones);
-    setSessions(data.sessions);
-    setFlights(flightData);
-  }, [client, orgId]);
-  useEffect(() => {
-    let cancelled = false;
-    if (orgId && userId)
-      Promise.all([
+    if (!client || !orgId || !userId) return;
+    const current = epoch.current;
+    setLoading(true);
+    try {
+      const [fleet, imported] = await Promise.all([
         loadFleet(client, orgId),
         listFlightSummaries(client, orgId),
-      ])
-        .then(([data, flightData]) => {
-          if (!cancelled) {
-            setBatteries(data.batteries);
-            setDrones(data.drones);
-            setSessions(data.sessions);
-            setFlights(flightData);
-          }
-        })
-        .catch((e) => {
-          if (!cancelled) setMessage(errorMessage(e));
-        });
-    return () => {
-      cancelled = true;
-    };
-  }, [orgId, userId, refresh]);
+      ]);
+      if (current !== epoch.current) return;
+      setBatteries(fleet.batteries);
+      setDrones(fleet.drones);
+      setSessions(fleet.sessions);
+      setFlights(imported);
+    } finally {
+      if (current === epoch.current) setLoading(false);
+    }
+  }, [client, orgId, userId]);
+  useEffect(() => {
+    const current = epoch.current;
+    void Promise.resolve()
+      .then(refresh)
+      .catch((e) => {
+        if (current === epoch.current) {
+          setMessage(errorMessage(e));
+          setIsError(true);
+        }
+      });
+  }, [refresh]);
   async function run(action: () => Promise<void>) {
-    if (actionLock.current) return;
-    actionLock.current = true;
+    if (lock.current) return false;
+    lock.current = true;
     setBusy(true);
     setMessage("");
+    setIsError(false);
+    const current = epoch.current;
     try {
       await action();
+      return true;
     } catch (e) {
-      setMessage(errorMessage(e));
+      if (current === epoch.current) {
+        setMessage(errorMessage(e));
+        setIsError(true);
+      }
+      return false;
     } finally {
-      actionLock.current = false;
+      lock.current = false;
       setBusy(false);
     }
   }
-  function choose(payload: string) {
-    const id = parseBatteryQr(payload);
-    if (!id || !batteries.some((b) => b.id === id)) {
-      Alert.alert(
-        "Battery not in this organization",
-        "Refresh your fleet or select the correct organization.",
-      );
-      return;
-    }
+  function selectOrg(id: string) {
+    if (busy || id === orgId || !orgs.some((o) => o.id === id)) return;
+    epoch.current++;
+    setOrgId(id);
+    setBatteries([]);
+    setDrones([]);
+    setFlights([]);
+    setSessions([]);
+    resetPreflight();
+    setMessage("");
+  }
+  function selectBattery(id: string) {
+    if (lock.current) return false;
+    if (!batteries.some((b) => b.id === id)) return false;
     setBatteryId(id);
-    setManual("");
+    setScannedAt(new Date().toISOString());
+    eventId.current = randomUUID();
+    setSavedSession(false);
+    return true;
   }
-  async function scan() {
-    const result = permission?.granted ? permission : await requestPermission();
-    if (!result.granted) {
-      Alert.alert(
-        "Camera permission needed",
-        "Use a manual identifier if you prefer.",
-      );
-      return;
+  function choosePayload(payload: string) {
+    const id =
+      parseBatteryQr(payload) ??
+      batteries.find(
+        (b) => b.asset_tag.toLowerCase() === payload.trim().toLowerCase(),
+      )?.id;
+    if (id && selectBattery(id)) {
+      setMessage("");
+      return true;
     }
-    scanLock.current = false;
-    setScanning(true);
+    setMessage(
+      "Battery not found in this organization. Choose it from your fleet or check its QR label.",
+    );
+    setIsError(true);
+    return false;
   }
-  const selected = batteries.find((b) => b.id === batteryId);
-  return (
-    <View style={s.root}>
-      <StatusBar style="dark" />
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={s.content}
-      >
-        <Text style={s.brand}>LogSkies / Field</Text>
-        <Text style={s.muted}>ONLINE WORKSPACE · Shared fleet records</Text>
-        {message ? (
-          <View style={s.card}>
-            <Text accessibilityRole="alert" style={s.text}>
-              {message}
-            </Text>
-          </View>
-        ) : null}
-        <View style={s.card}>
-          <Text style={s.heading}>Help & legal</Text>
-          <Button
-            text="Support & privacy email"
-            onPress={() =>
-              void run(async () => {
-                await Linking.openURL("mailto:support@logskies.com");
-              })
-            }
-          />
-          <Button
-            text="Terms and Conditions"
-            onPress={() =>
-              void run(async () => {
-                await Linking.openURL("https://logskies.com/terms");
-              })
-            }
-          />
-          <Button
-            text="Privacy Policy"
-            onPress={() =>
-              void run(async () => {
-                await Linking.openURL("https://logskies.com/privacy");
-              })
-            }
-          />
-          {userId && (
-            <Button
-              text="Request account deletion"
-              onPress={() =>
-                void run(async () => {
-                  await Linking.openURL(
-                    "mailto:support@logskies.com?subject=LogSkies%20account%20deletion%20request",
-                  );
-                })
-              }
-            />
-          )}
-        </View>
-        {!ready ? (
-          <Text style={s.text}>Loading account…</Text>
-        ) : !userId ? (
-          <View style={s.card}>
-            <Text style={s.heading}>Sign in to your fleet</Text>
-            <TextInput
-              accessibilityLabel="Email"
-              placeholder="Email"
-              placeholderTextColor="#68716a"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-              style={s.input}
-              value={email}
-              onChangeText={setEmail}
-            />
-            <TextInput
-              accessibilityLabel="Password"
-              placeholder="Password"
-              placeholderTextColor="#68716a"
-              autoCapitalize="none"
-              secureTextEntry
-              style={s.input}
-              value={password}
-              onChangeText={setPassword}
-            />
-            <Button
-              disabled={busy || !email || !password}
-              text={busy ? "Signing in…" : "Sign in"}
-              onPress={() =>
-                void run(async () => {
-                  const { error } = await client.auth.signInWithPassword({
-                    email: email.trim(),
-                    password,
-                  });
-                  if (error) throw error;
-                  setPassword("");
-                })
-              }
-            />
-            <Text style={s.muted}>
-              Create your account and organization in the web workspace first.
-            </Text>
-            <Button
-              disabled={busy || !email.trim()}
-              text="Forgot password? Send reset email"
-              onPress={() =>
-                void run(async () => {
-                  await requestPasswordReset(
-                    client,
-                    email,
-                    "https://logskies.com/workspace",
-                  );
-                  setMessage(
-                    "If an account exists for this email, a reset link will be sent. Open it in your browser, choose a new password, then return here to sign in.",
-                  );
-                })
-              }
-            />
-            <Button
-              disabled={busy}
-              text="Create account on web"
-              onPress={() =>
-                void run(async () => {
-                  await Linking.openURL("https://logskies.com/workspace");
-                })
-              }
-            />
-            <Button
-              disabled={busy}
-              text="Help & FAQ"
-              onPress={() =>
-                void run(async () => {
-                  await Linking.openURL("https://logskies.com/faq");
-                })
-              }
-            />
-          </View>
-        ) : (
-          <>
-            <View style={s.card}>
-              <Text style={s.heading}>Organization</Text>
-              {orgs.length ? (
-                orgs.map((o) => (
-                  <Button
-                    key={o.id}
-                    disabled={busy}
-                    text={`${o.id === orgId ? "✓ " : ""}${o.name}`}
-                    onPress={() => {
-                      authEpoch.current++;
-                      setOrgId(o.id);
-                      setBatteries([]);
-                      setDrones([]);
-                      setSessions([]);
-                      setFlights([]);
-                      setBatteryId("");
-                      setDroneId("");
-                    }}
-                  />
-                ))
-              ) : (
-                <Text style={s.muted}>
-                  No memberships found. Create an organization on web, then sign
-                  in again.
-                </Text>
-              )}
-              <Button
-                secondary
-                disabled={busy}
-                text="Sign out"
-                onPress={() =>
-                  void run(async () => {
-                    const { error } = await client.auth.signOut();
-                    if (error) throw error;
-                    setOrgId("");
-                    setOrgs([]);
-                    setBatteries([]);
-                    setDrones([]);
-                    setSessions([]);
-                    setFlights([]);
-                    setBatteryId("");
-                    setDroneId("");
-                    setScanning(false);
-                  })
-                }
-              />
-            </View>
-            {orgId ? (
-              <>
-                <Button
-                  disabled={busy}
-                  secondary
-                  text="Refresh shared fleet"
-                  onPress={() => void run(refresh)}
-                />
-                <Button
-                  disabled={busy || !batteries.length}
-                  text="Scan battery QR"
-                  onPress={() => void scan()}
-                />
-                {scanning ? (
-                  <View style={s.card}>
-                    <CameraView
-                      style={{ height: 300 }}
-                      barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
-                      onBarcodeScanned={({ data }) => {
-                        if (scanLock.current) return;
-                        scanLock.current = true;
-                        setScanning(false);
-                        choose(data);
-                      }}
-                    />
-                    <Button
-                      secondary
-                      text="Cancel"
-                      onPress={() => setScanning(false)}
-                    />
-                  </View>
-                ) : null}
-                <View style={s.card}>
-                  <Text style={s.heading}>Battery</Text>
-                  {batteries.length ? (
-                    batteries.map((b) => (
-                      <Button
-                        secondary
-                        disabled={busy}
-                        key={b.id}
-                        text={`${batteryId === b.id ? "✓ " : ""}${b.asset_tag} · ${b.capacity_mah} mAh`}
-                        onPress={() => setBatteryId(b.id)}
-                      />
-                    ))
-                  ) : (
-                    <Text style={s.muted}>
-                      Add a battery in the web workspace.
-                    </Text>
-                  )}
-                  <TextInput
-                    accessibilityLabel="Battery QR identifier"
-                    placeholder="logskies:battery:…"
-                    placeholderTextColor="#68716a"
-                    autoCapitalize="none"
-                    style={s.input}
-                    value={manual}
-                    onChangeText={setManual}
-                  />
-                  <Button
-                    secondary
-                    disabled={busy || !manual}
-                    text="Use identifier"
-                    onPress={() => choose(manual.trim())}
-                  />
-                </View>
-                <View style={s.card}>
-                  <Text style={s.heading}>Drone</Text>
-                  {drones.length ? (
-                    drones.map((d) => (
-                      <Button
-                        secondary
-                        disabled={busy}
-                        key={d.id}
-                        text={`${droneId === d.id ? "✓ " : ""}${d.model_name}`}
-                        onPress={() => setDroneId(d.id)}
-                      />
-                    ))
-                  ) : (
-                    <Text style={s.muted}>
-                      Add a drone in the web workspace.
-                    </Text>
-                  )}
-                  <Text style={s.muted}>
-                    {selected
-                      ? `${selected.asset_tag} · Health unassessed`
-                      : "Select a battery before recording."}
-                  </Text>
-                  <Button
-                    disabled={busy || !batteryId || !droneId}
-                    text={busy ? "Saving…" : "Record online preflight session"}
-                    onPress={() =>
-                      void run(async () => {
-                        await savePreflight(client, {
-                          orgId,
-                          batteryId,
-                          droneId,
-                          eventId: randomUUID(),
-                          scannedAt: new Date().toISOString(),
-                        });
-                        await refresh();
-                        setMessage(
-                          "Session saved online. Refresh the web workspace to see it.",
-                        );
-                      })
-                    }
-                  />
-                  <Text style={s.muted}>
-                    An internet connection is required. Preflight records do not
-                    confirm takeoff.
-                  </Text>
-                </View>
-                <View style={s.card}>
-                  <Text style={s.heading}>Shared session history</Text>
-                  {sessions.length ? (
-                    sessions.map((record) => (
-                      <View key={record.id} style={s.history}>
-                        <Text style={s.text}>
-                          {batteries.find((b) => b.id === record.battery_id)
-                            ?.asset_tag ?? "Unknown battery"}
-                        </Text>
-                        <Text style={s.muted}>
-                          {new Date(record.scanned_at).toLocaleString("en-IN", {
-                            timeZone: "Asia/Kolkata",
-                          })}{" "}
-                          IST
-                        </Text>
-                      </View>
-                    ))
-                  ) : (
-                    <Text style={s.muted}>No sessions recorded.</Text>
-                  )}
-                </View>
-                <View style={s.card}>
-                  <Text style={s.heading}>Flight Operations Reports</Text>
-                  <Text style={s.muted}>
-                    Shared imported evidence, subject to operator review. Import
-                    .bin, .tlog or .ulg logs and print branded reports in the
-                    web workspace. Airspace checks and notification evidence are
-                    operator-reviewed; LogSkies does not notify authorities.
-                  </Text>
-                  {flights.map((flight) => (
-                    <View key={flight.id} style={s.history}>
-                      <Text style={s.text}>{flight.filename}</Text>
-                      <Text style={s.muted}>
-                        {Number(flight.duration).toFixed(2)} minutes ·{" "}
-                        {flight.purpose || "Purpose not set"}
-                      </Text>
-                      <Text style={s.muted}>
-                        {flight.format || "Telemetry"} · Occurrence:{" "}
-                        {flight.occurrence_type || "Not declared"}
-                      </Text>
-                      <Text style={s.muted}>
-                        Airspace check:{" "}
-                        {flight.airspace_checked_utc || "Evidence pending"}
-                      </Text>
-                      {flight.occurrence_type &&
-                        !["nil", "unknown"].includes(
-                          flight.occurrence_type,
-                        ) && (
-                          <Text style={s.text}>
-                            Review notifications promptly. For covered
-                            occurrences: as soon as reasonably practicable, no
-                            later than 24 hours after awareness. Open web
-                            reports for evidence and receipts.
-                          </Text>
-                        )}
-                    </View>
-                  ))}
-                  {!flights.length && (
-                    <Text style={s.muted}>No imported flights yet.</Text>
-                  )}
-                  <Button
-                    secondary
-                    text="Open web reports"
-                    onPress={() => {
-                      void Linking.openURL(
-                        "https://logskies.com/workspace",
-                      ).catch((e) => setMessage(errorMessage(e)));
-                    }}
-                  />
-                </View>
-              </>
-            ) : null}
-          </>
-        )}
-      </ScrollView>
-    </View>
-  );
+  async function recordPreflight() {
+    if (
+      !orgId ||
+      !batteryId ||
+      !droneId ||
+      !scannedAt ||
+      !eventId.current ||
+      savedSession
+    )
+      return false;
+    const record: Preflight = {
+      id: eventId.current,
+      battery_id: batteryId,
+      drone_id: droneId,
+      scanned_at: scannedAt,
+    };
+    const current = epoch.current;
+    return run(async () => {
+      if (!preview) {
+        if (!client)
+          throw new Error("Sign in before saving a preflight session.");
+        await savePreflight(client, {
+          orgId,
+          batteryId,
+          droneId,
+          eventId: record.id,
+          scannedAt,
+        });
+      }
+      if (current !== epoch.current) return;
+      // A failed history refresh must not turn a successful write into a failed save.
+      setSessions((items) => [record, ...items]);
+      setSavedSession(true);
+      setMessage(
+        preview
+          ? "Example session saved in memory only."
+          : "Preflight session saved online.",
+      );
+    });
+  }
+  const openWeb = (path = "/workspace") =>
+    run(async () => {
+      await Linking.openURL(`https://logskies.com${path}`);
+    });
+  return {
+    ready,
+    userId,
+    orgs,
+    orgId,
+    org: orgs.find((o) => o.id === orgId),
+    batteries,
+    drones,
+    flights,
+    sessions,
+    loading,
+    busy,
+    message,
+    isError,
+    preview,
+    configured: !!client || preview,
+    batteryId,
+    droneId,
+    scannedAt,
+    savedSession,
+    preflightRevision,
+    selectBattery,
+    selectDrone: (id: string) => {
+      if (lock.current) return;
+      if (drones.some((d) => d.id === id)) {
+        setDroneId(id);
+        setSavedSession(false);
+      }
+    },
+    choosePayload,
+    resetPreflight,
+    recordPreflight,
+    selectOrg,
+    refresh: () => run(refresh),
+    run,
+    openWeb,
+    clearMessage: () => setMessage(""),
+    signIn: (email: string, password: string) =>
+      run(async () => {
+        if (!client) throw new Error("The shared workspace is not configured.");
+        const { error } = await client.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
+        if (error) throw error;
+      }),
+    resetPassword: (email: string) =>
+      run(async () => {
+        if (!client) throw new Error("The shared workspace is not configured.");
+        await requestPasswordReset(
+          client,
+          email,
+          "https://logskies.com/workspace",
+        );
+        setMessage(
+          "If an account exists, a reset link will be emailed. Choose your password in the browser, then return here.",
+        );
+      }),
+    signOut: () =>
+      run(async () => {
+        if (preview) {
+          epoch.current++;
+          clearPrivate();
+          setUserId(null);
+        } else if (client) {
+          const { error } = await client.auth.signOut();
+          if (error) throw error;
+        }
+      }),
+  };
 }
-function Button({
-  text,
-  onPress,
-  disabled = false,
-  secondary = false,
-}: {
-  text: string;
-  onPress: () => void;
-  disabled?: boolean;
-  secondary?: boolean;
-}) {
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityState={{ disabled }}
-      disabled={disabled}
-      onPress={onPress}
-      style={[s.button, secondary && s.secondary, disabled && { opacity: 0.5 }]}
-    >
-      <Text style={secondary ? s.text : s.buttonText}>{text}</Text>
-    </Pressable>
-  );
+type Workspace = ReturnType<typeof useWorkspaceState>;
+const Context = createContext<Workspace | null>(null);
+export function WorkspaceProvider({ children }: PropsWithChildren) {
+  const value = useWorkspaceState();
+  return <Context.Provider value={value}>{children}</Context.Provider>;
 }
-const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#f5f6f3" },
-  content: { padding: 24, paddingTop: 60, paddingBottom: 40, gap: 18 },
-  brand: { fontSize: 25, fontWeight: "600", color: "#6c9e37" },
-  heading: { fontSize: 19, fontWeight: "600", color: "#303830" },
-  card: {
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#e0e6d9",
-    borderRadius: 12,
-    padding: 20,
-    gap: 14,
-  },
-  text: { color: "#303830", fontSize: 14 },
-  muted: { color: "#68716a", fontSize: 12, lineHeight: 19 },
-  input: {
-    borderWidth: 1,
-    borderColor: "#e0e6d9",
-    borderRadius: 7,
-    padding: 12,
-    color: "#303830",
-  },
-  button: {
-    backgroundColor: "#527c27",
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  secondary: {
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: "#e0e6d9",
-  },
-  buttonText: { color: "#ffffff", fontWeight: "600" },
-  history: {
-    borderTopWidth: 1,
-    borderColor: "#e0e6d9",
-    paddingTop: 14,
-    gap: 6,
-  },
-});
+export function useWorkspace() {
+  const value = useContext(Context);
+  if (!value) throw new Error("WorkspaceProvider is required.");
+  return value;
+}
