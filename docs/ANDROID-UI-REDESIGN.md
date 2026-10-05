@@ -1,5 +1,7 @@
 # Android field workflow redesign — 5 October 2026
 
+Signed preview build submitted: https://expo.dev/accounts/vekaashsenhas-team/projects/logskies/builds/4d2c8ef7-abb1-462b-9b26-ddefa97c5614 . Last checked: waiting in Expo's free-tier queue. No completed APK or physical-device validation is claimed. Matching public FAQ is live on logskies.com.
+
 Five Expo Router tabs replace the single long screen: Home, Fleet, Scan, Flights and More. White cards, restrained green accents, safe-area spacing, readable type and named controls use one shared component set. Narrow phone layouts and wide/folded layouts use the same navigation; content has a readable maximum width.
 
 - Home presents a preflight action, counts for the loaded records, recent imported intervals and reminders for missing airspace/occurrence entries. Counts are not lifetime totals, and reminders do not prove compliance.

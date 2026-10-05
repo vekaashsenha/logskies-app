@@ -1,5 +1,12 @@
 # Android preview validation
 
+## Latest layout build — 5 October 2026
+
+Version 1.0.1 (Android code 2), source commit `80e86f7`:
+https://expo.dev/accounts/vekaashsenhas-team/projects/logskies/builds/4d2c8ef7-abb1-462b-9b26-ddefa97c5614
+
+Submitted successfully; last checked in Expo's free-tier queue, not yet an available APK. Build success and installation must be confirmed separately. Older installed APKs retain their layout. Test Home/Fleet/Scan/Flights/More, the three-step manual/QR preflight flow, session history, organization switching and sign-out on the Fold 5 / Android 16 after installation. See ANDROID-UI-REDESIGN.md. Browser-rendered example previews: qa/android-redesign-home.jpg and qa/android-redesign-fleet.jpg.
+
 Expo project: `@vekaashsenhas-team/logskies`, ID `663836c4-bbbd-46e8-9519-609afdeef598`.
 Build profile: `preview`, internal APK, public Supabase configuration in the project preview environment. Never put privileged server keys or signing credentials in source control. Production environment configuration is deliberately separate.
 
