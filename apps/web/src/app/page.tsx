@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { CallToAction } from "@/components/marketing";
+import FlightStory from "@/components/flight-story";
 import {
   IndustryExplorer,
   WorkflowDemo,
@@ -21,16 +22,14 @@ export default function Home() {
               ✣ Battery intelligence. Clearer flight records.
             </p>
             <h1>
-              Know your battery packs.
+              Turn flight logs into
               <br />
-              <span>Fly smart.</span>
-              <br />
-              Stay ready for review.
+              <span>clear fleet records.</span>
             </h1>
             <p className="hero-description">
-              The modern fleet workspace for Indian UAV operators. Scan battery
-              QR stickers, organize your flight records, and prepare
-              company-branded reports with the evidence behind every mission.
+              Review flight routes and battery telemetry, then prepare reports
+              with your company logo. One shared workspace for your drones,
+              physical battery packs and flight evidence.
             </p>
             <div className="hero-actions">
               <Link href="/workspace" className="primary">
@@ -98,6 +97,7 @@ export default function Home() {
           <strong>Your logo on reports</strong>
         </div>
       </section>
+      <FlightStory />
       <IntegrationHub />
       <IndustryExplorer />
       <WorkflowDemo />

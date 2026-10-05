@@ -147,6 +147,10 @@ export function KnowledgeHub() {
 }
 export const faqs = [
   [
+    "What can a flight log tell me?",
+    "A supported log can provide route observations, timing evidence and recorded battery voltage, current or consumed capacity. Available fields depend on the aircraft and recording settings. Missing GPS, incomplete flight boundaries and inconsistent clocks limit what can be established; a log alone does not certify battery airworthiness, identify a crash cause or prove regulatory compliance.",
+  ],
+  [
     "How do I contact support or request account deletion?",
     "Email support@logskies.com for help, privacy concerns or an account-deletion request. Kritika, Founder, is the privacy contact. Requests are handled manually with identity checks where needed. Organization-owned records may need an authorized organization's involvement. See the Privacy Policy and Terms; signing out does not delete hosted records.",
   ],

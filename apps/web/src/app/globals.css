@@ -1541,3 +1541,27 @@ h1,h2,h3 {font-weight:600;letter-spacing:normal;}
 @media(max-width:600px){.flight-workbench .stats{grid-template-columns:1fr 1fr}.flight-workbench .stats strong{font-size:15px}.flight-workbench .form-row{grid-template-columns:1fr}.flight-report{padding:20px}.flight-report th{width:38%}}
 @media print {.flight-workbench .flight-report {border:0;box-shadow:none;margin:0;padding:0;width:100%}.flight-report h3{break-after:avoid}.flight-report tr{break-inside:avoid}.source-hash{font-size:9px}}
 @media print { body:has(.flight-report) .fleet-report { display: none; } }
+/* Original flight-log workflow illustration: live text, responsive diagrams. */
+.flight-story {background:#f7f9f5;}
+.flight-story-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;list-style:none;padding:0;margin:36px 0 24px;}
+.flight-story-grid li {min-width:0;}
+.story-visual {height:270px;border-radius:12px;overflow:hidden;position:relative;margin-bottom:22px;}
+.story-file {background:#e8efdf;border:1px solid #d7e2cc;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#35482b;padding:24px;}
+.story-example {font-size:10px;letter-spacing:1px;position:absolute;top:16px;left:18px;text-transform:uppercase;}
+.story-file-icon {font-size:38px;line-height:1;border:1px solid #b5c7a4;background:#fff;border-radius:12px;padding:17px 25px;}
+.story-formats {display:flex;gap:8px;}.story-formats span {background:#fff;border-radius:5px;padding:3px 16px;font-weight:600;}
+.story-file small {font-size:11px;text-align:center;}
+.story-analysis {background:#202d28;color:#eff6eb;padding:43px 20px 16px;}
+.story-analysis>svg {width:100%;height:147px;display:block;}
+.story-chart {border-top:1px solid #ffffff24;display:flex;gap:16px;align-items:center;padding-top:10px;}
+.story-chart span {font-size:11px;white-space:nowrap;}.story-chart svg {width:100%;height:40px;}
+.story-report {background:#e8ede6;padding:18px 24px;}
+.story-paper {background:white;border:1px solid #d5ded0;border-radius:4px;padding:17px;box-shadow:0 8px 20px #2334210d;height:100%;font-size:11px;}
+.story-paper-brand {display:flex;align-items:center;gap:8px;border-bottom:1px solid #e3e7df;padding-bottom:10px;margin-bottom:10px;}.story-paper-brand>span{font-size:23px;color:var(--accent-dark);}
+.story-report-row {display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #eef0eb;padding:5px 0;font-size:10px;}.story-report-row>span:last-child{color:#796128;}
+.story-signature {font-size:9px;margin-top:12px;}.story-draft {display:block;color:#796128;font-size:8px;letter-spacing:.6px;margin-top:8px;}
+.story-step {font-size:11px;font-weight:700;letter-spacing:1.4px;color:var(--accent-dark);}
+.flight-story-grid h3 {font-size:21px;margin:9px 0;}.flight-story-grid p {color:var(--muted);font-size:14px;line-height:1.7;margin:0;}
+.story-footnote {display:flex;align-items:center;gap:32px;border-top:1px solid var(--border);padding-top:22px;}.story-footnote p{font-size:12px;color:var(--muted);margin:0;flex:1;}.story-footnote a{flex-shrink:0;}
+@media(max-width:900px){.flight-story-grid{gap:16px;}.story-report{padding:18px 12px;}.story-paper{padding:12px;}}
+@media(max-width:750px){.flight-story-grid{grid-template-columns:1fr;gap:32px;max-width:540px;margin-left:auto;margin-right:auto;}.story-visual{height:270px;}.story-footnote{flex-direction:column;align-items:flex-start;gap:16px;}}
