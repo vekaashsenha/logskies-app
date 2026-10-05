@@ -23,7 +23,7 @@ const integrations = [
   [
     "Pixhawk & PX4",
     "Autopilot ecosystem",
-    "ArduPilot .bin and supported MAVLink .tlog formats can be imported. PX4 .ulg files are not supported yet.",
+    "ArduPilot .bin and supported MAVLink .tlog formats can be imported. Logs mixing aircraft boot time with capture UTC are rejected; older MAVLink imports must be re-imported before report export. Armed intervals are timing proxies, not confirmed takeoff and landing. PX4 .ulg files are not supported yet.",
     "Compatibility depends on format",
   ],
   [

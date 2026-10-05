@@ -41,6 +41,48 @@ test("CRC corruption is rejected rather than silently treated as telemetry", () 
   // The rejected packet was the only preceding disarmed heartbeat.
   assert.equal(parsed.flights[0].complete, false);
 });
+test("Mixed capture UTC and boot-clock packets are blocked before report records exist", () => {
+  const original = new Uint8Array(read("synthetic-flight.tlog"));
+  // Strip the first capture prefix, leaving a valid CRC heartbeat at boot zero.
+  assert.throws(
+    () => parseLog(original.slice(8).buffer, "mixed.tlog"),
+    /Mixed capture UTC/,
+  );
+});
+test("Capture-clock rollback is rejected, while coherent flights over 90 minutes are retained", () => {
+  const bytes = new Uint8Array(read("synthetic-flight.tlog"));
+  const view = new DataView(bytes.buffer);
+  const first = view.getBigUint64(0, false);
+  for (let offset = 0; offset < bytes.length;) {
+    const stamp = view.getBigUint64(offset, false);
+    view.setBigUint64(offset, first + (stamp - first) * 61n, false);
+    offset += 8 + bytes[offset + 9] + 8;
+  }
+  assert.equal(
+    parseLog(bytes.buffer, "long.tlog").flights[0].durationMinutes,
+    122,
+  );
+  view.setBigUint64(25, first - 1000000n, false);
+  assert.throws(() => parseLog(bytes.buffer, "rollback.tlog"), /clock resets/);
+});
+test("Boot-only telemetry accepts timestamp zero without inventing UTC", () => {
+  const original = new Uint8Array(read("synthetic-flight.tlog"));
+  const packets: Uint8Array[] = [];
+  for (let offset = 0; offset < original.length;) {
+    const start = offset + 8;
+    const size = original[start + 1] + 8;
+    packets.push(original.slice(start, start + size));
+    offset = start + size;
+  }
+  const bytes = Buffer.concat(packets);
+  const parsed = parseLog(
+    bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength),
+    "boot.tlog",
+  );
+  assert.equal(parsed.flights[0].start, 0);
+  assert.equal(parsed.flights[0].startUtc, null);
+  assert.ok(parsed.flights[0].durationMinutes < 3);
+});
 test("Arbitrary file, zero length and oversized logs are rejected", () => {
   assert.throws(() => parseLog(new ArrayBuffer(0), "a.bin"));
   assert.throws(() => parseLog(new ArrayBuffer(10), "a.exe"));

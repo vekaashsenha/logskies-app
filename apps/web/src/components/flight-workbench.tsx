@@ -118,6 +118,12 @@ export default function FlightWorkbench({
         }
       : rawHealth;
   const checks = draft ? reviewChecks(draft.flight, draft.review) : [];
+  const reportBlocked =
+    !!draft &&
+    ((draft.format === "MAVLink" &&
+      draft.parserVersion === "logskies-browser-1.0") ||
+      !Number.isFinite(draft.flight.durationMinutes) ||
+      draft.flight.durationMinutes <= 0);
   if (draft?.airspace)
     checks.push({
       name: "Imported regional map geometry",
@@ -942,12 +948,18 @@ export default function FlightWorkbench({
             </button>
           </section>
           <div className="actions no-print">
-            <button className="primary" onClick={() => window.print()}>
+            <button
+              disabled={reportBlocked}
+              className="primary"
+              onClick={() => {
+                if (!reportBlocked) window.print();
+              }}
+            >
               Print flight report / Save PDF
             </button>
             <a
               className="secondary"
-              href={exportCsv()}
+              href={reportBlocked ? undefined : exportCsv()}
               download="logskies-flight-record-draft.csv"
             >
               Export flight CSV
@@ -985,177 +997,186 @@ export default function FlightWorkbench({
               Download original log
             </button>
           </div>
-          <article className="report flight-report">
-            <div className="report-header">
-              <div className="report-company">
-                {logo && (
-                  <Image
-                    src={logo}
-                    alt="Company logo"
-                    width={120}
-                    height={70}
-                    unoptimized
-                    className="company-logo"
-                  />
-                )}
-                <div>
-                  <h2>{company}</h2>
-                  <p>Flight Operations Report</p>
+          {reportBlocked ? (
+            <p role="alert">
+              Report blocked: re-import the original log with the updated clock
+              validation. Older MAVLink imports require rechecking.
+            </p>
+          ) : (
+            <article className="report flight-report">
+              <div className="report-header">
+                <div className="report-company">
+                  {logo && (
+                    <Image
+                      src={logo}
+                      alt="Company logo"
+                      width={120}
+                      height={70}
+                      unoptimized
+                      className="company-logo"
+                    />
+                  )}
+                  <div>
+                    <h2>{company}</h2>
+                    <p>Flight Operations Report</p>
+                  </div>
+                </div>
+                <div className="report-meta">
+                  DRAFT / EVIDENCE REVIEW
+                  <br />
+                  Report: {draft.id.slice(0, 8)}
+                  <br />
+                  Parser: {draft.parserVersion}
                 </div>
               </div>
-              <div className="report-meta">
-                DRAFT / EVIDENCE REVIEW
-                <br />
-                Report: {draft.id.slice(0, 8)}
-                <br />
-                Parser: {draft.parserVersion}
+              <div className="report-warning">
+                Official eGCA format acceptance remains unverified. This record
+                does not establish regulatory compliance.
               </div>
-            </div>
-            <div className="report-warning">
-              Official eGCA format acceptance remains unverified. This record
-              does not establish regulatory compliance.
-            </div>
-            <h3>Mission record</h3>
-            <table>
-              <tbody>
-                {[
-                  ["Aircraft UIN", draft.review.droneUin || "Missing"],
-                  [
-                    "Pilot / RPC",
-                    draft.review.pilotName + " / " + draft.review.pilotRpc,
-                  ],
-                  ["Takeoff UTC", draft.review.takeoffUtc || "Unknown"],
-                  ["Landing UTC", draft.review.landingUtc || "Unknown"],
-                  [
-                    "Takeoff IST",
-                    draft.review.takeoffUtc &&
-                    Number.isFinite(Date.parse(draft.review.takeoffUtc))
-                      ? new Date(draft.review.takeoffUtc).toLocaleString(
-                          "en-GB",
-                          { timeZone: "Asia/Kolkata" },
-                        )
-                      : "Unknown",
-                  ],
-                  [
-                    "Landing IST",
-                    draft.review.landingUtc &&
-                    Number.isFinite(Date.parse(draft.review.landingUtc))
-                      ? new Date(draft.review.landingUtc).toLocaleString(
-                          "en-GB",
-                          { timeZone: "Asia/Kolkata" },
-                        )
-                      : "Unknown",
-                  ],
-                  [
-                    "Telemetry interval duration",
-                    draft.flight.durationMinutes.toFixed(2) +
-                      " min (" +
-                      draft.flight.boundary +
-                      ")",
-                  ],
-                  [
-                    "First / last route position",
-                    draft.flight.route.length
-                      ? draft.flight.route[0].lat.toFixed(4) +
-                        ", " +
-                        draft.flight.route[0].lon.toFixed(4) +
+              <h3>Mission record</h3>
+              <table>
+                <tbody>
+                  {[
+                    ["Aircraft UIN", draft.review.droneUin || "Missing"],
+                    [
+                      "Pilot / RPC",
+                      draft.review.pilotName + " / " + draft.review.pilotRpc,
+                    ],
+                    ["Takeoff UTC", draft.review.takeoffUtc || "Unknown"],
+                    ["Landing UTC", draft.review.landingUtc || "Unknown"],
+                    [
+                      "Takeoff IST",
+                      draft.review.takeoffUtc &&
+                      Number.isFinite(Date.parse(draft.review.takeoffUtc))
+                        ? new Date(draft.review.takeoffUtc).toLocaleString(
+                            "en-GB",
+                            { timeZone: "Asia/Kolkata" },
+                          )
+                        : "Unknown",
+                    ],
+                    [
+                      "Landing IST",
+                      draft.review.landingUtc &&
+                      Number.isFinite(Date.parse(draft.review.landingUtc))
+                        ? new Date(draft.review.landingUtc).toLocaleString(
+                            "en-GB",
+                            { timeZone: "Asia/Kolkata" },
+                          )
+                        : "Unknown",
+                    ],
+                    [
+                      "Telemetry interval duration",
+                      draft.flight.durationMinutes.toFixed(2) +
+                        " min (" +
+                        draft.flight.boundary +
+                        ")",
+                    ],
+                    [
+                      "First / last route position",
+                      draft.flight.route.length
+                        ? draft.flight.route[0].lat.toFixed(4) +
+                          ", " +
+                          draft.flight.route[0].lon.toFixed(4) +
+                          " / " +
+                          draft.flight.route.at(-1)!.lat.toFixed(4) +
+                          ", " +
+                          draft.flight.route.at(-1)!.lon.toFixed(4)
+                        : "Unavailable",
+                    ],
+                    [
+                      "Maximum AGL / relative altitude",
+                      display(draft.review.verifiedAglMeters) +
                         " / " +
-                        draft.flight.route.at(-1)!.lat.toFixed(4) +
-                        ", " +
-                        draft.flight.route.at(-1)!.lon.toFixed(4)
-                      : "Unavailable",
-                  ],
-                  [
-                    "Maximum AGL / relative altitude",
-                    display(draft.review.verifiedAglMeters) +
-                      " / " +
-                      display(draft.flight.maxRelativeAltitude) +
-                      " m",
-                  ],
-                  [
-                    "Purpose / incidents",
-                    draft.review.purpose + " / " + draft.review.incidents,
-                  ],
-                  [
-                    "Airspace / permission",
-                    draft.review.airspaceZone +
-                      " / " +
-                      (draft.review.permissionReference || "Not supplied"),
-                  ],
-                  [
-                    "Battery / estimated health",
-                    (battery?.tag || "Unmatched") +
-                      " / " +
-                      (draft.batteryId && health.health !== null
-                        ? display(health.health) + "%"
-                        : "Unassessed"),
-                  ],
-                  [
-                    "Consumed mAh / max current",
-                    display(health.consumedMah) +
-                      " / " +
-                      display(health.maxCurrent) +
-                      " A",
-                  ],
-                ].map(([label, value]) => (
-                  <tr key={label}>
-                    <th scope="row">{label}</th>
-                    <td>{value}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <h3>Evidence checklist</h3>
-            <table>
-              <tbody>
-                {checks.map((check) => (
-                  <tr key={check.name}>
-                    <th scope="row">{check.name}</th>
-                    <td>
-                      <strong className={`check-state ${check.state}`}>
-                        {check.state.toUpperCase()}
-                      </strong>
-                      <br />
-                      {check.detail}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <h3>Source provenance</h3>
-            <p className="source-hash">
-              {draft.filename} · {draft.sourceBytes.toLocaleString()} bytes
-              <br />
-              SHA-256: {draft.sourceHash}
-            </p>
-            <p>
-              Imported: {draft.importedAt}
-              <br />
-              Reviewer: {draft.review.reviewer || "Pending"} ·{" "}
-              {draft.review.reviewed ? "Operator declared review" : "Pending"}
-            </p>
-            <p>
-              AGL evidence: {draft.review.altitudeEvidence || "Pending"}
-              <br />
-              Airspace evidence: {draft.review.airspaceEvidence || "Pending"}
-            </p>
-            <footer>
-              Prepared with LogSkies. Operator entries and automated telemetry
-              are identified separately. Health model: {health.version}.
-              Preserve the original source log and review all evidence gaps.
-            </footer>
-            <h3>Operator sign-off</h3>
-            <p>
-              Review this record against the original log and applicable
-              operational permissions. Telemetry estimates do not certify
-              battery airworthiness.
-            </p>
-            <p>Remote pilot signature: ____________________ Date: __________</p>
-            <p>
-              Fleet manager signature: ____________________ Organization seal:
-              __________
-            </p>
-          </article>
+                        display(draft.flight.maxRelativeAltitude) +
+                        " m",
+                    ],
+                    [
+                      "Purpose / incidents",
+                      draft.review.purpose + " / " + draft.review.incidents,
+                    ],
+                    [
+                      "Airspace / permission",
+                      draft.review.airspaceZone +
+                        " / " +
+                        (draft.review.permissionReference || "Not supplied"),
+                    ],
+                    [
+                      "Battery / estimated health",
+                      (battery?.tag || "Unmatched") +
+                        " / " +
+                        (draft.batteryId && health.health !== null
+                          ? display(health.health) + "%"
+                          : "Unassessed"),
+                    ],
+                    [
+                      "Consumed mAh / max current",
+                      display(health.consumedMah) +
+                        " / " +
+                        display(health.maxCurrent) +
+                        " A",
+                    ],
+                  ].map(([label, value]) => (
+                    <tr key={label}>
+                      <th scope="row">{label}</th>
+                      <td>{value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <h3>Evidence checklist</h3>
+              <table>
+                <tbody>
+                  {checks.map((check) => (
+                    <tr key={check.name}>
+                      <th scope="row">{check.name}</th>
+                      <td>
+                        <strong className={`check-state ${check.state}`}>
+                          {check.state.toUpperCase()}
+                        </strong>
+                        <br />
+                        {check.detail}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <h3>Source provenance</h3>
+              <p className="source-hash">
+                {draft.filename} · {draft.sourceBytes.toLocaleString()} bytes
+                <br />
+                SHA-256: {draft.sourceHash}
+              </p>
+              <p>
+                Imported: {draft.importedAt}
+                <br />
+                Reviewer: {draft.review.reviewer || "Pending"} ·{" "}
+                {draft.review.reviewed ? "Operator declared review" : "Pending"}
+              </p>
+              <p>
+                AGL evidence: {draft.review.altitudeEvidence || "Pending"}
+                <br />
+                Airspace evidence: {draft.review.airspaceEvidence || "Pending"}
+              </p>
+              <footer>
+                Prepared with LogSkies. Operator entries and automated telemetry
+                are identified separately. Health model: {health.version}.
+                Preserve the original source log and review all evidence gaps.
+              </footer>
+              <h3>Operator sign-off</h3>
+              <p>
+                Review this record against the original log and applicable
+                operational permissions. Telemetry estimates do not certify
+                battery airworthiness.
+              </p>
+              <p>
+                Remote pilot signature: ____________________ Date: __________
+              </p>
+              <p>
+                Fleet manager signature: ____________________ Organization seal:
+                __________
+              </p>
+            </article>
+          )}
         </>
       )}
     </div>

@@ -1,5 +1,5 @@
 import schemaJson from "./mavlink-schema.json" with { type: "json" };
-export const PARSER_VERSION = "logskies-browser-1.0";
+export const PARSER_VERSION = "logskies-browser-1.1";
 export type Point = {
   t: number;
   lat: number;
@@ -44,6 +44,7 @@ type Row = {
   t: number;
   epoch: number | null;
   system: number;
+  clockSource?: "capture" | "boot";
 };
 type Field = {
   name: string;
@@ -307,15 +308,16 @@ function readMavlink(bytes: Uint8Array) {
     signed = 0;
   const lastTime = new Map<number, number>();
   for (let offset = 0; offset < bytes.length;) {
-    const magic = bytes[offset];
+    let captureEpoch: number | null = null;
     if (
       offset + 9 < bytes.length &&
       (bytes[offset + 8] === 0xfe || bytes[offset + 8] === 0xfd) &&
       validEpoch(Number(view.getBigUint64(offset, false)) / 1000)
     ) {
+      captureEpoch = Number(view.getBigUint64(offset, false)) / 1000;
       offset += 8;
-      continue;
     }
+    const magic = bytes[offset];
     if (magic !== 0xfe && magic !== 0xfd) {
       offset++;
       continue;
@@ -385,17 +387,12 @@ function readMavlink(bytes: Uint8Array) {
           )
         : mavScalar(pv, field.offset, field.type);
     }
-    let epoch: number | null = null;
-    if (offset >= 8) {
-      const capture = Number(view.getBigUint64(offset - 8, false)) / 1000;
-      if (validEpoch(capture)) epoch = capture;
-    }
-    const captureEpoch = epoch;
+    let epoch: number | null = captureEpoch;
     let t = num(fields, "time_boot_ms") / 1000;
     if (!finite(t)) {
       const us = num(fields, "time_usec");
       if (validEpoch(us / 1000)) {
-        epoch = us / 1000;
+        epoch = captureEpoch ?? us / 1000;
         t = lastTime.get(system) ?? 0;
       } else t = finite(us) ? us / 1e6 : (lastTime.get(system) ?? 0);
     }
@@ -403,7 +400,7 @@ function readMavlink(bytes: Uint8Array) {
       schema.name === "SYSTEM_TIME" &&
       validEpoch(num(fields, "time_unix_usec") / 1000)
     )
-      epoch = num(fields, "time_unix_usec") / 1000;
+      epoch = captureEpoch ?? num(fields, "time_unix_usec") / 1000;
     lastTime.set(system, t);
     // Timestamped tlogs use capture UTC for ordering, avoiding stale heartbeat boot clocks.
     rows.push({
@@ -412,6 +409,7 @@ function readMavlink(bytes: Uint8Array) {
       t: captureEpoch !== null ? captureEpoch / 1000 : t,
       epoch,
       system,
+      clockSource: captureEpoch !== null ? "capture" : "boot",
     });
     if (rows.length > 400000)
       throw new Error(
@@ -558,8 +556,15 @@ export function parseLog(
   const chosen = format === "DataFlash" ? 0 : (systemId ?? systems[0]);
   const rows = decoded.rows.filter((row) => row.system === chosen);
   if (!rows.length) throw new Error("No telemetry for the selected system ID.");
+  if (new Set(rows.map((row) => row.clockSource)).size > 1)
+    throw new Error(
+      "PARSING_VALIDATION_ERROR: Mixed capture UTC and aircraft boot clocks. Split or re-export the original log; no flight duration was accepted.",
+    );
   for (let i = 1; i < rows.length; i++)
-    if (rows[i].t < rows[i - 1].t - 10)
+    if (
+      rows[i].t <
+      rows[i - 1].t - (rows[i].clockSource === "capture" ? 0 : 10)
+    )
       throw new Error(
         "Log clock resets or mixes clock domains. Split the log before import.",
       );

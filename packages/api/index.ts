@@ -171,6 +171,9 @@ export async function listFlightSummaries(
       "id,drone_id,battery_id,created_at,filename:record->>filename,purpose:record->review->>purpose,duration:record->flight->durationMinutes,start_utc:record->flight->>startUtc",
     )
     .eq("org_id", orgId)
+    .or(
+      "record->>format.neq.MAVLink,record->>parserVersion.neq.logskies-browser-1.0",
+    )
     .order("created_at", { ascending: false })
     .limit(50);
   if (error) throw error;
