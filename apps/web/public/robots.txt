@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /workspace
+Disallow: /dashboard
+
+Sitemap: https://logskies.com/sitemap.xml

@@ -3,3 +3,12 @@
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(self), microphone=(), geolocation=()
+
+/workspace
+  X-Robots-Tag: noindex
+/workspace/*
+  X-Robots-Tag: noindex
+/dashboard
+  X-Robots-Tag: noindex
+/dashboard/*
+  X-Robots-Tag: noindex

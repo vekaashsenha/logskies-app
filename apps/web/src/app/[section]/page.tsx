@@ -41,6 +41,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { section } = await params;
   return {
+    alternates: { canonical: `/${section}` },
     title:
       section === "dgca-compliance"
         ? "Flight Operations Reports"
