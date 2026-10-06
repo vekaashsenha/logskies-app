@@ -9,7 +9,7 @@ export default function FormerDemo() {
     <main className="content">
       <h1>Use your connected workspace</h1>
       <p>
-        Sign in to manage your company's shared flight, drone and battery
+        Sign in to manage shared company flight, drone and battery
         records.
       </p>
       <Link className="primary" href="/workspace">
