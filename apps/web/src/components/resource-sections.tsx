@@ -148,6 +148,10 @@ export function KnowledgeHub() {
 }
 export const faqs = [
   [
+    "Can I select my drone model?",
+    "Yes. On web, Add drone has a model dropdown, including your company’s existing model names. Choose Other / custom model to enter any unlisted aircraft. The saved model appears in the Android fleet too. Native fleet creation remains a web workflow. A model listing does not guarantee log-parser compatibility; record the aircraft UIN separately.",
+  ],
+  [
     "Where do I manage company and pilot profiles?",
     "In the connected web workspace, use Company profile and Pilot profiles. Android version 1.0.2 adds Company & pilot profiles under More. Owners and admins can update the company name and add or edit pilot names, RPC numbers and expiry dates; other members can view them. Report logos are uploaded on web. Adding a pilot record does not create a login or invite a teammate. On web, select a pilot in a flight review to copy their details, then verify the original certificate and issue date before saving. Profiles are not credential verification. Company address, GST, contact fields and pilot invitations are not included yet.",
   ],

@@ -1,11 +1,70 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  googleSignInEnabled,
+  beginGoogleSignIn,
   requestPasswordReset,
   savePilot,
   renameOrg,
   type SupabaseClient,
 } from "./index.ts";
+
+test("Google availability respects provider settings and rejects failed settings requests", async () => {
+  const originalFetch = globalThis.fetch;
+  try {
+    for (const enabled of [true, false]) {
+      globalThis.fetch = async () =>
+        new Response(JSON.stringify({ external: { google: enabled } }));
+      assert.equal(
+        await googleSignInEnabled("https://example.test", "public-test-key"),
+        enabled,
+      );
+    }
+    globalThis.fetch = async () => new Response("unavailable", { status: 503 });
+    await assert.rejects(
+      googleSignInEnabled("https://example.test", "public-test-key"),
+      /availability/,
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("Google login preserves redirect and native browser handoff and propagates provider errors", async () => {
+  let options: unknown;
+  const client = {
+    auth: {
+      signInWithOAuth: async (input: unknown) => {
+        options = input;
+        return {
+          data: { url: "https://accounts.google.com/test" },
+          error: null,
+        };
+      },
+    },
+  } as unknown as SupabaseClient;
+  assert.equal(
+    await beginGoogleSignIn(client, "logskies://auth/callback", true),
+    "https://accounts.google.com/test",
+  );
+  assert.deepEqual(options, {
+    provider: "google",
+    options: {
+      redirectTo: "logskies://auth/callback",
+      skipBrowserRedirect: true,
+      queryParams: { prompt: "select_account" },
+    },
+  });
+  client.auth.signInWithOAuth = async () =>
+    ({
+      data: { provider: "google", url: null },
+      error: new Error("Provider disabled"),
+    }) as never;
+  await assert.rejects(
+    beginGoogleSignIn(client, "https://logskies.com/workspace"),
+    /Provider disabled/,
+  );
+});
 
 test("Profile inputs reject invalid calendar dates and empty names before database writes", async () => {
   const client = {

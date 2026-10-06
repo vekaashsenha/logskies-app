@@ -55,6 +55,7 @@ export default function Workspace({
   const [chemistry, setChemistry] = useState("LiPo");
   const [cells, setCells] = useState("6");
   const [droneName, setDroneName] = useState("");
+  const [droneModelChoice, setDroneModelChoice] = useState("");
   const [uin, setUin] = useState("");
   const [batteryId, setBatteryId] = useState("");
   const [droneId, setDroneId] = useState("");
@@ -821,6 +822,7 @@ export default function Workspace({
               void run(async () => {
                 await addDrone(client, orgId, droneName, uin);
                 setDroneName("");
+                setDroneModelChoice("");
                 setUin("");
                 await refresh();
               });
@@ -828,13 +830,54 @@ export default function Workspace({
           >
             <h2>Add drone</h2>
             <label>
-              Model / name
-              <input
+              Drone model
+              <select
                 required
-                value={droneName}
-                onChange={(e) => setDroneName(e.target.value)}
-              />
+                value={droneModelChoice}
+                onChange={(e) => {
+                  const choice = e.target.value;
+                  setDroneModelChoice(choice);
+                  setDroneName(choice === "custom" ? "" : choice);
+                }}
+              >
+                <option value="">Select a drone model</option>
+                {[
+                  ...new Set([
+                    "Garuda Aerospace Agri Kisan Drone",
+                    "Garuda Aerospace Agri Kisan Drone V2",
+                    "IoTechWorld Agribot",
+                    "IoTechWorld Surveybot",
+                    "DJI AGRAS T25",
+                    "DJI AGRAS T50",
+                    "DJI Mavic 3 Enterprise",
+                    "DJI Matrice 350 RTK",
+                    ...drones.map((drone) => drone.model_name),
+                  ]),
+                ]
+                  .sort()
+                  .map((model) => (
+                    <option key={model} value={model}>
+                      {model}
+                    </option>
+                  ))}
+                <option value="custom">Other / custom model</option>
+              </select>
             </label>
+            {droneModelChoice === "custom" && (
+              <label>
+                Custom model / name
+                <input
+                  required
+                  value={droneName}
+                  onChange={(e) => setDroneName(e.target.value)}
+                />
+              </label>
+            )}
+            <p className="fine-print">
+              Model names identify your equipment. Log import support depends on
+              the recorded file format; a listed model does not confirm
+              compatibility. Use UIN to distinguish aircraft of the same model.
+            </p>
             <label>
               UIN (optional while setting up)
               <input value={uin} onChange={(e) => setUin(e.target.value)} />
