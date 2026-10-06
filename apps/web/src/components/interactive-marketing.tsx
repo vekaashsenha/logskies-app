@@ -88,7 +88,7 @@ export function IndustryExplorer() {
               ))}
             </div>
           </div>
-          <Link href="/dashboard">Explore interactive workspace →</Link>
+          <Link href="/workspace">Open your workspace →</Link>
         </div>
       </div>
     </section>

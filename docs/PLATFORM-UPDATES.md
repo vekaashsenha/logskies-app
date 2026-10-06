@@ -1,5 +1,7 @@
 # Web and Android release consistency
 
+6 October 2026 pilot-group onboarding: removed local demo entry points from sign-in, homepage, footer and public calls to action. Public links lead to the connected workspace; /dashboard redirects there on Cloudflare and renders a sign-in link locally. FAQ and privacy describe connected storage accurately. Existing browser-local demo data is not migrated or deleted. Android already uses connected authentication and has no production demo entry point; no native update is needed for this website change.
+
 5 October 2026 profiles: shared pilot CRUD and company-name editing on web and Android 1.0.2; report pilot selection copies details into the review. Logo upload remains on web. Existing RLS applies; pilot records do not create accounts. See PROFILES.md for scope and remaining company/legal metadata. Native source is ahead of the prior 1.0.1 preview and requires a new APK.
 
 5 October 2026 Android layout redesign: Home/Fleet/Scan/Flights/More routes share the existing organization data. Preflight is a three-step flow, with manual battery selection, confirmation and explicit save success. Website FAQ describes the actual native/web boundaries. The new APK must be installed; older APKs keep their layout. See ANDROID-UI-REDESIGN.md for visual QA and remaining physical-device checks.

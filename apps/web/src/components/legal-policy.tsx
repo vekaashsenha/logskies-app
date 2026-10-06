@@ -25,7 +25,7 @@ export default function LegalPolicy({ kind }: { kind: "terms" | "privacy" }) {
           ],
           [
             "Availability and ending use",
-            "Service interruptions may occur. Preserve original logs independently and export important records. Clearing browser data removes local demo records, not hosted organization records. Stop using LogSkies or contact support to request account deletion. Organization-owned operational records may need an authorized organization's decision or lawful retention; we will explain applicable restrictions.",
+            "Service interruptions may occur. Preserve original logs independently and export important records. Clearing browser data does not delete hosted organization records. Stop using LogSkies or contact support to request account deletion. Organization-owned operational records may need an authorized organization's decision or lawful retention; we will explain applicable restrictions.",
           ],
           [
             "Liability and disputes",
@@ -47,7 +47,7 @@ export default function LegalPolicy({ kind }: { kind: "terms" | "privacy" }) {
           ],
           [
             "Device permissions and local data",
-            "Android camera access scans battery QR labels. The current QR workflow does not upload camera images or record audio; manual battery selection is available. Revoke camera permission in Android settings if desired. Flight coordinates come from uploaded telemetry; the app does not request continuous background phone location. Web and Android store authentication/session information locally. The demo stores records in browser local storage/IndexedDB and does not sync them. Clearing local data may remove demo records. Signing out is not deletion of hosted records.",
+            "Android camera access scans battery QR labels. The current QR workflow does not upload camera images or record audio; manual battery selection is available. Revoke camera permission in Android settings if desired. Flight coordinates come from uploaded telemetry; the app does not request continuous background phone location. Web and Android store authentication/session information locally. Earlier local demo records, if present, remain on that browser and are not transferred into the connected workspace. Signing out is not deletion of hosted records.",
           ],
           [
             "Retention and deletion requests",

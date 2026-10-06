@@ -37,8 +37,8 @@ export function CallToAction() {
           <Link href="/workspace" className="button-white">
             Open your workspace →
           </Link>
-          <Link href="/dashboard" className="button-outline-light">
-            Explore the demo
+          <Link href="/faq" className="button-outline-light">
+            Help & FAQ
           </Link>
         </div>
       </div>

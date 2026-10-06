@@ -55,7 +55,7 @@ export default function FlightStory() {
         </ol>
         <div className="story-footnote">
           <p>Android supports battery QR and preflight workflows, shared flight summaries and opening web reports. Available data depends on the log; reports require operator review.</p>
-          <Link href="/dashboard" className="secondary">Explore the workflow →</Link>
+          <Link href="/workspace" className="secondary">Explore the workflow →</Link>
         </div>
       </div>
     </section>

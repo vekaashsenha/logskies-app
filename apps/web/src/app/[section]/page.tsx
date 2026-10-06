@@ -121,7 +121,7 @@ export default async function Section({
                         <li key={point}>{point}</li>
                       ))}
                     </ul>
-                    <Link href="/dashboard">Explore the workflow →</Link>
+                    <Link href="/workspace">Explore the workflow →</Link>
                   </div>
                 </article>
               ))}
@@ -249,8 +249,8 @@ export default async function Section({
                 <li>Capture preflights on web and Android.</li>
                 <li>Review flight evidence before exporting reports.</li>
               </ul>
-              <Link href="/dashboard" className="secondary">
-                Explore the demo first →
+              <Link href="/workspace" className="secondary">
+                Open your workspace →
               </Link>
             </div>
             <ContactForm />
@@ -326,8 +326,8 @@ export default async function Section({
               , subsequent amendments and current operational restrictions
               before flight.
             </p>
-            <Link href="/dashboard" className="primary">
-              Preview a company-branded draft →
+            <Link href="/workspace" className="primary">
+              Prepare a company-branded report →
             </Link>
           </section>
           <FaqSection />

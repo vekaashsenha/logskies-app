@@ -201,7 +201,7 @@ export const faqs = [
   ],
   [
     "Which flight logs can I import?",
-    "The online workspace and local demo accept ArduPilot .bin, supported MAVLink .tlog and PX4 .ulg files up to 50 MB. ULog imports summarize supported position/battery/arming topics; diagnostic-only files may have none. Unknown forensic topics remain in the original. Customer flight logs still need validation.",
+    "The online workspace accepts ArduPilot .bin, supported MAVLink .tlog and PX4 .ulg files up to 50 MB. ULog imports summarize supported position/battery/arming topics; diagnostic-only files may have none. Unknown forensic topics remain in the original. Customer flight logs still need validation.",
   ],
   [
     "Does LogSkies provide flight permission or current DigitalSky restrictions?",
@@ -213,7 +213,7 @@ export const faqs = [
   ],
   [
     "Where are imported flight records stored?",
-    "In the online workspace, original logs and imported reviews are saved privately in Supabase for your organization. Parsing runs on your device. The Android app can show shared flight summaries; Android preview sign-in, preflight sync, flight history and opening web reports have been checked on a test device. Camera scanning, session/logout and network-failure checks remain pending. The demo dashboard remains browser-local. Retain original logs and export backups.",
+    "In the online workspace, original logs and imported reviews are saved privately in Supabase for your organization. Parsing runs on your device. The Android app can show shared flight summaries; Android preview sign-in, preflight sync, flight history and opening web reports have been checked on a test device. Camera scanning, session/logout and network-failure checks remain pending. Retain original logs and export backups.",
   ],
   [
     "Does every flight produce a battery health score?",

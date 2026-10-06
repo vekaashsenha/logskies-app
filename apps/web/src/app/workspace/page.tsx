@@ -282,9 +282,6 @@ export default function Workspace() {
           <p className="muted">
             Your account and hosted database are not configured yet.
           </p>
-          <Link href="/dashboard" className="text-button">
-            Open local demo →
-          </Link>
         </section>
       </main>
     );
@@ -429,9 +426,6 @@ export default function Workspace() {
           >
             Forgot password? Send reset email
           </button>
-          <Link href="/dashboard" className="text-button">
-            Open local demo
-          </Link>
         </form>
       </main>
     );

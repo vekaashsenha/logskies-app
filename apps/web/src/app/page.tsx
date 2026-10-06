@@ -37,9 +37,6 @@ export default function Home() {
               <Link href="/workspace" className="primary">
                 Open your workspace →
               </Link>
-              <Link href="/dashboard" className="secondary">
-                Explore interactive demo
-              </Link>
             </div>
             <p className="hero-note">
               Early access · Web workspace + Android preview
@@ -116,8 +113,8 @@ export default function Home() {
             record pack. Review missing evidence before presenting a report for
             an audit.
           </p>
-          <Link href="/dashboard" className="primary">
-            Preview branded reports →
+          <Link href="/workspace" className="primary">
+            Prepare branded reports →
           </Link>
         </div>
         <div className="paper-preview">

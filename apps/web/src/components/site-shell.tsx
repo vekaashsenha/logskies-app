@@ -91,7 +91,6 @@ export function SiteFooter() {
         </div>
         <div>
           <strong>Get started</strong>
-          <Link href="/dashboard">Interactive demo</Link>
           <Link href="/workspace">Your workspace</Link>
           <Link href="/contact">Contact</Link>
           <Link href="/faq">FAQ</Link>
