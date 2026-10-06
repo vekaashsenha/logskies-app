@@ -88,7 +88,7 @@ export function IndustryExplorer() {
               ))}
             </div>
           </div>
-          <Link href="/workspace">Open your workspace →</Link>
+          <Link href="/signup">Sign up →</Link>
         </div>
       </div>
     </section>
@@ -271,8 +271,8 @@ export function PricingMatrix() {
             Paid subscriptions are not open yet. Final pricing and plan limits
             will be published when billing is available.
           </p>
-          <Link href="/workspace" className="primary">
-            Open your workspace →
+          <Link href="/signup" className="primary">
+            Sign up →
           </Link>
           <p className="muted">
             No payment is collected in the current early-access workflow.

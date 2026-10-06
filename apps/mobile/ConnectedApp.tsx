@@ -11,6 +11,7 @@ import React, {
 import { AppState, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Linking from "expo-linking";
+import * as WebBrowser from "expo-web-browser";
 import { randomUUID } from "expo-crypto";
 import {
   createClient,
@@ -20,6 +21,8 @@ import {
   savePreflight,
   requestPasswordReset,
   errorMessage,
+  googleSignInEnabled,
+  beginGoogleSignIn,
   type FleetBattery,
   type FleetDrone,
   type FlightSummary,
@@ -42,6 +45,7 @@ export const connectedClient =
           persistSession: true,
           autoRefreshToken: true,
           detectSessionInUrl: false,
+          flowType: "pkce",
         },
       })
     : null;
@@ -50,6 +54,20 @@ const demoOrg: Org = {
   name: "Example Flight Team",
   logo_storage_path: null,
 };
+let googleExchange: { code: string; promise: Promise<void> } | null = null;
+async function completeGoogleSignIn(code: string) {
+  if (!connectedClient)
+    throw new Error("The shared account is not configured.");
+  if (!code || code.length > 2048)
+    throw new Error("Invalid Google sign-in callback.");
+  if (googleExchange?.code === code) return googleExchange.promise;
+  const promise = (async () => {
+    const { error } = await connectedClient.auth.exchangeCodeForSession(code);
+    if (error) throw error;
+  })();
+  googleExchange = { code, promise };
+  return promise;
+}
 const demoDrones: FleetDrone[] = [
   {
     id: "demo-drone-1",
@@ -128,6 +146,21 @@ function useWorkspaceState() {
   const [authGeneration, setAuthGeneration] = useState(0),
     epoch = useRef(0),
     lock = useRef(false);
+  const [googleAvailable, setGoogleAvailable] = useState(false);
+  useEffect(() => {
+    let active = true;
+    if (!preview && url && key)
+      googleSignInEnabled(url, key)
+        .then((value) => {
+          if (active) setGoogleAvailable(value);
+        })
+        .catch(() => {
+          if (active) setGoogleAvailable(false);
+        });
+    return () => {
+      active = false;
+    };
+  }, []);
   const [batteryId, setBatteryId] = useState(""),
     [droneId, setDroneId] = useState(""),
     [scannedAt, setScannedAt] = useState("");
@@ -370,6 +403,38 @@ function useWorkspaceState() {
     isError,
     preview,
     configured: !!client || preview,
+    googleAvailable,
+    completeGoogleSignIn,
+    signInGoogle: () =>
+      run(async () => {
+        if (!client || !googleAvailable)
+          throw new Error(
+            "Google sign-in setup is still pending. Use email for now.",
+          );
+        const redirect = "logskies://auth/callback";
+        const loginUrl = await beginGoogleSignIn(client, redirect, true);
+        const result = await WebBrowser.openAuthSessionAsync(
+          loginUrl,
+          redirect,
+        );
+        if (result.type !== "success")
+          throw new Error("Google sign-in was cancelled. You can try again.");
+        const returned = new URL(result.url);
+        if (
+          returned.protocol !== "logskies:" ||
+          returned.hostname !== "auth" ||
+          returned.pathname !== "/callback"
+        )
+          throw new Error("Unexpected sign-in callback.");
+        if (returned.searchParams.get("error"))
+          throw new Error("Google sign-in was not completed.");
+        const code = returned.searchParams.get("code");
+        if (!code)
+          throw new Error(
+            "Google sign-in did not return an authorization code.",
+          );
+        await completeGoogleSignIn(code);
+      }),
     batteryId,
     droneId,
     scannedAt,

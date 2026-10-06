@@ -7,8 +7,8 @@ export default function ContactForm() {
         Create your account to register your fleet, record preflights and
         prepare Flight Operations Reports.
       </p>
-      <Link href="/workspace" className="primary">
-        Open your workspace →
+      <Link href="/signup" className="primary">
+        Sign up →
       </Link>
       <Link href="/faq" className="secondary">
         Read frequently asked questions

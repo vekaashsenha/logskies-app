@@ -12,3 +12,7 @@
   X-Robots-Tag: noindex
 /dashboard/*
   X-Robots-Tag: noindex
+/signup
+  X-Robots-Tag: noindex
+/signin
+  X-Robots-Tag: noindex

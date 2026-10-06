@@ -34,8 +34,8 @@ export default function Home() {
               physical battery packs and flight evidence.
             </p>
             <div className="hero-actions">
-              <Link href="/workspace" className="primary">
-                Open your workspace →
+              <Link href="/signup" className="primary">
+                Sign up →
               </Link>
             </div>
             <p className="hero-note">
@@ -113,7 +113,7 @@ export default function Home() {
             record pack. Review missing evidence before presenting a report for
             an audit.
           </p>
-          <Link href="/workspace" className="primary">
+          <Link href="/signup" className="primary">
             Prepare branded reports →
           </Link>
         </div>

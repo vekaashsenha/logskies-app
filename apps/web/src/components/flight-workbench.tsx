@@ -517,6 +517,12 @@ export default function FlightWorkbench({
             />
           </label>
           <p className="fine-print">
+            Successfully imported originals are stored privately. Authorized
+            LogSkies project administrators can access them for technical
+            validation and support. Upload only files you have permission to
+            share. Failed imports are not saved.
+          </p>
+          <p className="fine-print">
             Battery channels remain separate. UIN and physical battery serial
             numbers are supplied by the operator, not inferred from telemetry.
           </p>

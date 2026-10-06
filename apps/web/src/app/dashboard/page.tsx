@@ -12,8 +12,8 @@ export default function FormerDemo() {
         Sign in to manage shared company flight, drone and battery
         records.
       </p>
-      <Link className="primary" href="/workspace">
-        Open your workspace →
+      <Link className="primary" href="/signup">
+        Sign up →
       </Link>
     </main>
   );

@@ -235,7 +235,17 @@ export function FaqSection() {
         <p className="section-kicker">A FEW THINGS TO KNOW</p>
         <h2>Your questions, answered.</h2>
       </div>
-      {faqs.map(([question, answer]) => (
+      {[
+        [
+          "How do I create an account?",
+          "Choose Sign up, then Create account with email and confirm the email we send. Sign in is available separately. Google sign-in is available only after its provider setup is enabled; use email while setup is pending.",
+        ],
+        [
+          "Can LogSkies validate my uploaded log?",
+          "Successfully imported originals are stored privately with your organization records. Authorized LogSkies project administrators can access them for technical validation and support. Other organizations cannot access them. Selecting a file that fails import does not save it for review. Upload only logs you have permission to share; a saved upload is not an automatic validation or approval.",
+        ],
+        ...faqs,
+      ].map(([question, answer]) => (
         <details className="faq-item" key={question}>
           <summary>
             {question}

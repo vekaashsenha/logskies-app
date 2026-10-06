@@ -60,7 +60,17 @@ export default function LegalPolicy({ kind }: { kind: "terms" | "privacy" }) {
         ];
   return (
     <section className="public-section public-container guide-article">
-      <p>Effective: 5 October 2026 · Early-access service</p>
+      <p>Effective: 6 October 2026 · Early-access service</p>
+      {kind === "privacy" && (
+        <p>
+          When enabled, Google sign-in processes your Google account identifier,
+          email and basic profile for authentication. Authorized LogSkies
+          project administrators can access privately stored originals and
+          reviews for technical validation and support. This does not grant
+          other organizations access or mean every upload is automatically
+          validated.
+        </p>
+      )}
       <h2>Operator and contact</h2>
       <p>
         {operator}. First Floor, 3012, Green Field Colony, Faridabad, Haryana

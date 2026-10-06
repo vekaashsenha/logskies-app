@@ -34,8 +34,8 @@ export function CallToAction() {
           </p>
         </div>
         <div className="cta-buttons">
-          <Link href="/workspace" className="button-white">
-            Open your workspace →
+          <Link href="/signup" className="button-white">
+            Sign up →
           </Link>
           <Link href="/faq" className="button-outline-light">
             Help & FAQ

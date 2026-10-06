@@ -41,7 +41,8 @@ export function LoginScreen() {
   const w = useWorkspace(),
     [email, setEmail] = useState(""),
     [password, setPassword] = useState(""),
-    [show, setShow] = useState(false);
+    [show, setShow] = useState(false),
+    [googleConsent, setGoogleConsent] = useState(false);
   return (
     <Screen
       title="Welcome back"
@@ -101,11 +102,35 @@ export function LoginScreen() {
           onPress={() => void w.resetPassword(email)}
         />
       </Card>
+      <Card>
+        <Pressable
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: googleConsent }}
+          onPress={() => setGoogleConsent(!googleConsent)}
+          style={{ minHeight: 44 }}
+        >
+          <Body>
+            {googleConsent ? "☑" : "☐"} I agree to the Terms and have read the
+            Privacy Policy before continuing with Google.
+          </Body>
+        </Pressable>
+        <Button
+          title="Continue with Google"
+          secondary
+          disabled={w.busy || !w.googleAvailable || !googleConsent}
+          onPress={() => void w.signInGoogle()}
+        />
+        {!w.googleAvailable && (
+          <Muted>
+            Google sign-in setup is pending. Email sign-in is available.
+          </Muted>
+        )}
+      </Card>
       <Body>New to LogSkies?</Body>
       <Button
-        title="Create an account on web"
+        title="Create account"
         secondary
-        onPress={() => void w.openWeb()}
+        onPress={() => void w.openWeb("/signup")}
       />
       <Muted>
         Use the same account on web and Android. An internet connection is
@@ -297,7 +322,7 @@ function FleetContent() {
                   <Body>UIN: {d.uin_number || "Not entered"}</Body>
                   <Button
                     title="Use for preflight"
-                  disabled={w.busy}
+                    disabled={w.busy}
                     onPress={() => {
                       w.resetPreflight();
                       w.selectDrone(d.id);
@@ -330,7 +355,7 @@ function FleetContent() {
                   </Muted>
                   <Button
                     title="Open preflight"
-                  disabled={w.busy}
+                    disabled={w.busy}
                     onPress={() => {
                       w.resetPreflight();
                       router.navigate("/scan");

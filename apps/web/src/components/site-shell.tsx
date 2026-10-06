@@ -58,11 +58,18 @@ export function SiteHeader() {
             Help & contact
           </Link>
           <Link
-            href="/workspace"
+            href="/signin"
             className="nav-signin"
             onClick={() => setOpen(false)}
           >
-            Open workspace
+            Sign in
+          </Link>
+          <Link
+            href="/signup"
+            className="nav-signin"
+            onClick={() => setOpen(false)}
+          >
+            Sign up
           </Link>
         </nav>
       </div>
@@ -91,7 +98,7 @@ export function SiteFooter() {
         </div>
         <div>
           <strong>Get started</strong>
-          <Link href="/workspace">Your workspace</Link>
+          <Link href="/signup">Sign up / Sign in</Link>
           <Link href="/contact">Contact</Link>
           <Link href="/faq">FAQ</Link>
           <Link href="/privacy">Privacy</Link>

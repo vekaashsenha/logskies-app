@@ -1,6 +1,35 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 export { createClient };
 export type { SupabaseClient };
+export async function googleSignInEnabled(
+  url: string,
+  publishableKey: string,
+): Promise<boolean> {
+  const response = await fetch(`${url.replace(/\/$/, "")}/auth/v1/settings`, {
+    headers: { apikey: publishableKey },
+  });
+  if (!response.ok)
+    throw new Error("Unable to check Google sign-in availability.");
+  const settings = await response.json();
+  return settings.external?.google === true;
+}
+export async function beginGoogleSignIn(
+  client: SupabaseClient,
+  redirectTo: string,
+  skipBrowserRedirect = false,
+) {
+  const { data, error } = await client.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo,
+      skipBrowserRedirect,
+      queryParams: { prompt: "select_account" },
+    },
+  });
+  if (error) throw error;
+  if (!data.url) throw new Error("Google sign-in did not return a login URL.");
+  return data.url;
+}
 export async function requestPasswordReset(
   client: SupabaseClient,
   email: string,

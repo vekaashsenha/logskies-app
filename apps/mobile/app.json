@@ -2,7 +2,7 @@
   "expo": {
     "name": "LogSkies",
     "slug": "logskies",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -10,7 +10,7 @@
       "supportsTablet": true
     },
     "android": {
-      "versionCode": 3,
+      "versionCode": 4,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -31,7 +31,8 @@
           "cameraPermission": "Allow LogSkies to scan battery QR labels."
         }
       ],
-      "expo-router"
+      "expo-router",
+      "expo-web-browser"
     ],
     "scheme": "logskies",
     "owner": "vekaashsenhas-team",

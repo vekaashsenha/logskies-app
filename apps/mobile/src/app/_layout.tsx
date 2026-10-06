@@ -46,6 +46,7 @@ function Navigation() {
         <Stack.Screen name="flight/[id]" />
         <Stack.Screen name="profiles" />
       </Stack.Protected>
+      <Stack.Screen name="auth/callback" />
     </Stack>
   );
 }
