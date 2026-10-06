@@ -678,82 +678,6 @@ export default function Workspace({
             )}
           </section>
         )}
-        {orgId && (
-          <section className="panel form-grid">
-            <h2>Preflight session</h2>
-            <label>
-              Battery
-              <select
-                value={batteryId}
-                onChange={(e) => setBatteryId(e.target.value)}
-              >
-                <option value="">Select battery</option>
-                {batteries.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.asset_tag}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Drone
-              <select
-                value={droneId}
-                onChange={(e) => setDroneId(e.target.value)}
-              >
-                <option value="">Select drone</option>
-                {drones.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.model_name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button
-              disabled={busy || !batteryId || !droneId}
-              className="primary"
-              onClick={() =>
-                void run(async () => {
-                  await savePreflight(client, {
-                    orgId,
-                    batteryId,
-                    droneId,
-                    eventId: crypto.randomUUID(),
-                    scannedAt: new Date().toISOString(),
-                  });
-                  await refresh();
-                  setMessage(
-                    "Session saved. Android can read it from this organization.",
-                  );
-                })
-              }
-            >
-              Record session
-            </button>
-            {qr && (
-              <div>
-                <Image
-                  src={qr}
-                  alt="Battery QR label"
-                  width={200}
-                  height={200}
-                  unoptimized
-                />
-                <p className="muted">
-                  {batteries.find((b) => b.id === batteryId)?.asset_tag} · Scan
-                  this label in Android.
-                </p>
-                <a
-                  href={qr}
-                  download={`logskies-${batteryId}.png`}
-                  className="text-button"
-                >
-                  Download QR label
-                </a>
-              </div>
-            )}
-          </section>
-        )}
       </div>
       {orgId && canAdmin && (
         <div className="two-columns no-print">
@@ -899,6 +823,84 @@ export default function Workspace({
           </form>
         </div>
       )}
+      <div className="two-columns no-print">
+        {orgId && (
+          <section className="panel form-grid">
+            <h2>Preflight session</h2>
+            <label>
+              Battery
+              <select
+                value={batteryId}
+                onChange={(e) => setBatteryId(e.target.value)}
+              >
+                <option value="">Select battery</option>
+                {batteries.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.asset_tag}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Drone
+              <select
+                value={droneId}
+                onChange={(e) => setDroneId(e.target.value)}
+              >
+                <option value="">Select drone</option>
+                {drones.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.model_name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              disabled={busy || !batteryId || !droneId}
+              className="primary"
+              onClick={() =>
+                void run(async () => {
+                  await savePreflight(client, {
+                    orgId,
+                    batteryId,
+                    droneId,
+                    eventId: crypto.randomUUID(),
+                    scannedAt: new Date().toISOString(),
+                  });
+                  await refresh();
+                  setMessage(
+                    "Session saved. Android can read it from this organization.",
+                  );
+                })
+              }
+            >
+              Record session
+            </button>
+            {qr && (
+              <div>
+                <Image
+                  src={qr}
+                  alt="Battery QR label"
+                  width={200}
+                  height={200}
+                  unoptimized
+                />
+                <p className="muted">
+                  {batteries.find((b) => b.id === batteryId)?.asset_tag} · Scan
+                  this label in Android.
+                </p>
+                <a
+                  href={qr}
+                  download={`logskies-${batteryId}.png`}
+                  className="text-button"
+                >
+                  Download QR label
+                </a>
+              </div>
+            )}
+          </section>
+        )}
+      </div>
       {orgId && (
         <>
           <div hidden={!profileOpen}>
