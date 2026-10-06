@@ -297,6 +297,16 @@ test("PostgreSQL policies isolate tenants and reject unauthorized writes", async
       ).rows[0].purpose,
       "inspection",
     );
+    await db.exec("reset role");
+    await db.exec(fs.readFileSync("supabase/migrations/202610060001_profile_limits.sql", "utf8"));
+    await actor(owner);
+    await assert.rejects(db.query("select public.create_organization('Duplicate company')"), /already set up/);
+    for (let i = 0; i < 4; i++) {
+      await db.query("insert into public.pilot_profiles(org_id,display_name) values($1,$2)", [org, "Additional pilot " + i]);
+    }
+    await assert.rejects(db.query("insert into public.pilot_profiles(org_id,display_name) values($1,'Sixth pilot')", [org]), /maximum of five/);
+    await db.query("update public.pilot_profiles set display_name='Updated pilot' where org_id=$1", [org]);
+    assert.equal((await db.query("select * from public.pilot_profiles where org_id=$1", [org])).rows.length, 5);
     await actor("", "anon");
     assert.equal(
       (await db.query("select * from public.batteries")).rows.length,

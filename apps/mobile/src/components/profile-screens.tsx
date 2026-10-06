@@ -62,7 +62,7 @@ function Profiles() {
   }
   return (
     <Screen
-      title="Team profiles"
+      title="Profile"
       subtitle="Company identity and pilot credentials."
       action="Back"
       onAction={() => router.back()}
@@ -105,6 +105,7 @@ function Profiles() {
       </Card>
       <Card>
         <Heading>Pilot profiles</Heading>
+        <Muted>{pilots.length} / 5 pilot profiles</Muted>
         <Muted>
           Entered RPC details need certificate verification. A pilot record does
           not create an account or send an invitation.
@@ -140,7 +141,7 @@ function Profiles() {
           </Muted>
         )}
       </Card>
-      {admin && (
+      {admin && (id || pilots.length < 5) && (
         <Card>
           <Heading>{id ? "Edit pilot" : "Add pilot"}</Heading>
           <Field

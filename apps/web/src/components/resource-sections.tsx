@@ -148,6 +148,10 @@ export function KnowledgeHub() {
 }
 export const faqs = [
   [
+    "Where do I manage company and pilot details?",
+    "Open Profile to manage your company name, report logo and up to five pilot profiles. Company creation appears only during first-time setup. Existing companies and pilot records are preserved; owners/admins can edit saved profiles. Android keeps company and pilot details under Profile in More.",
+  ],
+  [
     "Can I select my drone model?",
     "Yes. On web, Add drone has a model dropdown, including your company’s existing model names. Choose Other / custom model to enter any unlisted aircraft. The saved model appears in the Android fleet too. Native fleet creation remains a web workflow. A model listing does not guarantee log-parser compatibility; record the aircraft UIN separately.",
   ],

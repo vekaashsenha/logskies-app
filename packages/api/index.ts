@@ -96,6 +96,10 @@ export async function savePilot(
     rpc_number: rpc || null,
     rpc_expires_on: expiry || null,
   };
+  if (!input.id && (await listPilots(client, orgId)).length >= 5)
+    throw new Error(
+      "A company can have a maximum of five pilot profiles. Edit an existing profile.",
+    );
   const query = input.id
     ? client
         .from("pilot_profiles")
@@ -155,6 +159,8 @@ export async function createOrg(
   client: SupabaseClient,
   name: string,
 ): Promise<string> {
+  if ((await listOrgs(client)).length > 0)
+    throw new Error("Your company is already set up. Manage it in Profile.");
   const { data, error } = await client.rpc("create_organization", {
     org_name: name,
   });

@@ -52,6 +52,7 @@ export default function PilotProfiles({
   return (
     <section className="panel form-grid no-print" id="pilot-profiles">
       <h2>Pilot profiles</h2>
+      <p>{pilots.length} / 5 pilot profiles</p>
       <p className="muted">
         Shared pilot names and RPC details. Entered credentials require
         verification against the original certificate. Adding a pilot does not
@@ -87,7 +88,7 @@ export default function PilotProfiles({
           )}
         </div>
       ))}
-      {canAdmin ? (
+      {canAdmin && (id || pilots.length < 5) ? (
         <form
           className="form-grid"
           onSubmit={async (e) => {
@@ -157,7 +158,9 @@ export default function PilotProfiles({
         </form>
       ) : (
         <p className="muted">
-          Ask an organization owner or admin to update pilot records.
+          {canAdmin
+            ? "Five pilot profiles are saved. Choose Edit on an existing pilot to update details."
+            : "Ask an organization owner or admin to update pilot records."}
         </p>
       )}
     </section>

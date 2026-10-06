@@ -55,6 +55,7 @@ export default function Workspace({
   const [chemistry, setChemistry] = useState("LiPo");
   const [cells, setCells] = useState("6");
   const [droneName, setDroneName] = useState("");
+  const [profileOpen, setProfileOpen] = useState(false);
   const [droneModelChoice, setDroneModelChoice] = useState("");
   const [uin, setUin] = useState("");
   const [batteryId, setBatteryId] = useState("");
@@ -550,6 +551,12 @@ export default function Workspace({
         </div>
         <button
           className="secondary"
+          onClick={() => setProfileOpen(!profileOpen)}
+        >
+          {profileOpen ? "Close Profile" : "Profile"}
+        </button>
+        <button
+          className="secondary"
           disabled={busy}
           onClick={() =>
             void run(async () => {
@@ -572,101 +579,105 @@ export default function Workspace({
         </p>
       )}
       <div className="two-columns no-print">
-        <section className="panel form-grid">
-          <h2>Company profile</h2>
-          {orgs.length > 0 && (
-            <label>
-              Active organization
-              <select
-                disabled={busy}
-                value={orgId}
-                onChange={(e) => {
-                  authEpoch.current++;
-                  setOrgId(e.target.value);
-                  setBatteryId("");
-                  setDroneId("");
-                  setQr({ batteryId: "", url: "" });
-                  setBatteries([]);
-                  setDrones([]);
-                  setSessions([]);
-                  setCanAdmin(false);
+        {(profileOpen || orgs.length === 0) && (
+          <section className="panel form-grid">
+            <h2>Company profile</h2>
+            {orgs.length > 1 && (
+              <label>
+                Active organization
+                <select
+                  disabled={busy}
+                  value={orgId}
+                  onChange={(e) => {
+                    authEpoch.current++;
+                    setOrgId(e.target.value);
+                    setBatteryId("");
+                    setDroneId("");
+                    setQr({ batteryId: "", url: "" });
+                    setBatteries([]);
+                    setDrones([]);
+                    setSessions([]);
+                    setCanAdmin(false);
+                  }}
+                >
+                  {orgs.map((o) => (
+                    <option value={o.id} key={o.id}>
+                      {o.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+            {orgs.length === 0 && (
+              <form
+                className="form-grid"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  void run(async () => {
+                    const id = await createOrg(client, orgName.trim());
+                    setOrgs(await listOrgs(client));
+                    setOrgId(id);
+                    setOrgName("");
+                  });
                 }}
               >
-                {orgs.map((o) => (
-                  <option value={o.id} key={o.id}>
-                    {o.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-          <form
-            className="form-grid"
-            onSubmit={(e) => {
-              e.preventDefault();
-              void run(async () => {
-                const id = await createOrg(client, orgName.trim());
-                setOrgs(await listOrgs(client));
-                setOrgId(id);
-                setOrgName("");
-              });
-            }}
-          >
-            <label>
-              New organization name
-              <input
-                required
-                maxLength={120}
-                value={orgName}
-                onChange={(e) => setOrgName(e.target.value)}
-              />
-            </label>
-            <button className="secondary" disabled={busy}>
-              Create organization
-            </button>
-          </form>
-          {orgId && canAdmin && (
-            <form
-              className="form-grid"
-              onSubmit={(e) => {
-                e.preventDefault();
-                void run(async () => {
-                  await renameOrg(client, orgId, companyName);
-                  setOrgs(await listOrgs(client));
-                  setCompanyName("");
-                  setMessage(
-                    "Company name saved. New report exports use this name.",
-                  );
-                });
-              }}
-            >
+                <label>
+                  Company name
+                  <input
+                    required
+                    maxLength={120}
+                    value={orgName}
+                    onChange={(e) => setOrgName(e.target.value)}
+                  />
+                </label>
+                <button className="secondary" disabled={busy}>
+                  Create company
+                </button>
+              </form>
+            )}
+            {orgId && canAdmin && (
+              <form
+                className="form-grid"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  void run(async () => {
+                    await renameOrg(client, orgId, companyName);
+                    setOrgs(await listOrgs(client));
+                    setCompanyName("");
+                    setMessage(
+                      "Company name saved. New report exports use this name.",
+                    );
+                  });
+                }}
+              >
+                <label>
+                  Company / operator display name
+                  <input
+                    required
+                    maxLength={120}
+                    placeholder={activeOrg?.name}
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                  />
+                </label>
+                <button className="secondary" disabled={busy}>
+                  Save company name
+                </button>
+              </form>
+            )}
+            {orgId && canAdmin && (
               <label>
-                Company / operator display name
+                Company report logo
                 <input
-                  required
-                  maxLength={120}
-                  placeholder={activeOrg?.name}
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  disabled={busy}
+                  onChange={(e) => void uploadLogo(e.target.files?.[0])}
                 />
               </label>
-              <button className="secondary" disabled={busy}>
-                Save company name
-              </button>
-            </form>
-          )}
-          {orgId && canAdmin && (
-            <label>
-              Company report logo
-              <input
-                type="file"
-                accept="image/png,image/jpeg,image/webp"
-                disabled={busy}
-                onChange={(e) => void uploadLogo(e.target.files?.[0])}
-              />
-            </label>
-          )}
-        </section>
+            )}
+          </section>
+        )}
         {orgId && (
           <section className="panel form-grid">
             <h2>Preflight session</h2>
@@ -890,13 +901,15 @@ export default function Workspace({
       )}
       {orgId && (
         <>
-          <PilotProfiles
-            key={orgId + userId}
-            client={client}
-            orgId={orgId}
-            canAdmin={canAdmin}
-            onLoaded={setPilots}
-          />
+          <div hidden={!profileOpen}>
+            <PilotProfiles
+              key={orgId + userId}
+              client={client}
+              orgId={orgId}
+              canAdmin={canAdmin}
+              onLoaded={setPilots}
+            />
+          </div>
           {flightStore && (
             <FlightWorkbench
               key={orgId + userId}

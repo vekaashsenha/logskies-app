@@ -1,5 +1,7 @@
 # Shared company and pilot profiles
 
+6 October update: web company forms and pilot profiles are hidden behind the Profile button. Company creation is first-time setup only. Existing multiple memberships are preserved and can be selected within Profile. Both clients use a five-profile creation limit, while existing profiles remain editable. Migration 202610060001 adds atomic database enforcement; until deployed the client limit cannot prevent direct or concurrent inserts. No existing records are deleted. Android updates need a new APK.
+
 Web workspace exposes company display name, existing private report-logo upload, and pilot creation/editing. Android 1.0.2 (version code 3) adds More → Company & pilot profiles, with company-name editing and pilot creation/editing. Android logo management opens the web workspace. Both platforms use existing organizations and pilot_profiles tables, with no migration or widened permissions.
 
 Members can read profiles. Owners/admins can edit; database RLS remains authoritative. Pilot records are operational records, not user accounts or invitations. Names, RPC numbers and expiry dates are entered data, not regulator verification. Expiry supports an empty setup value; complete credentials must be verified before relying on reports. No certificate uploads are introduced.
