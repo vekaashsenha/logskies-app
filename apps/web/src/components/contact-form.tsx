@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/account-link";
 export default function ContactForm() {
   return (
     <div className="public-card form-grid">

@@ -1,5 +1,7 @@
 # Google sign-in and trial log review
 
+Signed-in web navigation now replaces Sign in / Sign up with My fleet. Public account CTAs use the existing browser session and link to /workspace. Flight Reports opens /workspace#flight-history. One shared browser auth client coordinates navigation and workspace state, including sign-out. Native-to-browser sessions remain separate; no bearer tokens are transferred in URLs.
+
 7 October: signup is now two steps. Email details or choosing Google leads to a separate Terms and Conditions screen with privacy links and an unchecked required checkbox. Authentication/account creation starts only after agreement. Email sign-in remains one step. Android Google uses the same second-step structure; native email account creation opens the web signup. This UI consent is not a server-side legal acceptance audit record. Android 1.0.5 (6) requires a new APK.
 
 Web uses /signup and /signin with separate email account modes. Google availability is checked against Supabase's public auth settings. A disabled provider is explicitly described as pending.

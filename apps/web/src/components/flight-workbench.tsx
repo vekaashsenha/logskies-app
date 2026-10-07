@@ -534,7 +534,7 @@ export default function FlightWorkbench({
         </p>
       )}
       <section className="panel no-print">
-        <h2>Flight record history</h2>
+        <h2 id="flight-history">Flight record history</h2>
         <button
           className="secondary"
           disabled={busy}

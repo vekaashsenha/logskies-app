@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/account-link";
 import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Connected workspace",

@@ -147,6 +147,7 @@ export function KnowledgeHub() {
   );
 }
 export const faqs = [
+  ["Do I need to sign up again to make a report?", "No. While signed in on the website, Flight Reports opens your saved flight history and account buttons lead to My fleet. Import and review a log there to export its report. If you sign out or your session expires, sign in with your existing account. Android and a separate web browser have separate sessions; opening a web report from Android may require web sign-in."],
   [
     "Where do I manage company and pilot details?",
     "Open Profile to manage your company name, report logo and up to five pilot profiles. Company creation appears only during first-time setup. Existing companies and pilot records are preserved; owners/admins can edit saved profiles. Android keeps company and pilot details under Profile in More.",

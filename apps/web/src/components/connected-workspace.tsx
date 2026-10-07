@@ -7,7 +7,6 @@ import Link from "next/link";
 import Image from "next/image";
 import QRCode from "qrcode";
 import {
-  createClient,
   listOrgs,
   createOrg,
   renameOrg,
@@ -25,9 +24,10 @@ import {
   type FleetDrone,
   type Preflight,
 } from "@logskies/api";
+import { authClient } from "@/lib/auth-client";
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-const client = url && key ? createClient(url, key) : null;
+const client = authClient;
 export default function Workspace({
   initialAuthMode = "signin",
 }: {

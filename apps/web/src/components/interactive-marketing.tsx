@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/account-link";
 import { useRef, useState } from "react";
 import { IndustryArt, industries } from "./marketing";
 import { hasPaymentLinks, paymentLink } from "@/lib/payment-links";
