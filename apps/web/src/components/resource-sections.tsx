@@ -246,7 +246,7 @@ export function FaqSection() {
       {[
         [
           "How do I create an account?",
-          "Choose Sign up, then Create account with email and confirm the email we send. Sign in is available separately. Google sign-in is available only after its provider setup is enabled; use email while setup is pending.",
+          "Choose Sign up, enter your email and password or choose Google, then review and accept Terms and Conditions in step 2. Email signup sends a confirmation email. Email sign-in is available separately without repeating signup. Android Google uses the same second-step agreement; email account creation opens web signup.",
         ],
         [
           "Can LogSkies validate my uploaded log?",

@@ -43,6 +43,53 @@ export function LoginScreen() {
     [password, setPassword] = useState(""),
     [show, setShow] = useState(false),
     [googleConsent, setGoogleConsent] = useState(false);
+  const [googleTermsStep, setGoogleTermsStep] = useState(false);
+  if (googleTermsStep)
+    return (
+      <Screen title="Terms and Conditions" subtitle="Step 2 of 2">
+        <Card>
+          <Body>
+            Review our terms before continuing with Google. Your first Google
+            visit can create an account.
+          </Body>
+          <Button
+            secondary
+            title="Read Terms and Conditions"
+            onPress={() => void w.openWeb("/terms")}
+          />
+          <Button
+            secondary
+            title="Read Privacy Policy"
+            onPress={() => void w.openWeb("/privacy")}
+          />
+          <Pressable
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: googleConsent }}
+            onPress={() => setGoogleConsent(!googleConsent)}
+            style={{ minHeight: 44 }}
+          >
+            <Body>
+              {googleConsent ? "☑" : "☐"} I agree to the Terms and Conditions
+              and have read the Privacy Policy.
+            </Body>
+          </Pressable>
+          <Button
+            title="Agree and continue with Google"
+            disabled={w.busy || !googleConsent}
+            onPress={() => void w.signInGoogle()}
+          />
+          <Button
+            secondary
+            title="Back"
+            disabled={w.busy}
+            onPress={() => {
+              setGoogleTermsStep(false);
+              setGoogleConsent(false);
+            }}
+          />
+        </Card>
+      </Screen>
+    );
   return (
     <Screen
       title="Welcome back"
@@ -103,22 +150,14 @@ export function LoginScreen() {
         />
       </Card>
       <Card>
-        <Pressable
-          accessibilityRole="checkbox"
-          accessibilityState={{ checked: googleConsent }}
-          onPress={() => setGoogleConsent(!googleConsent)}
-          style={{ minHeight: 44 }}
-        >
-          <Body>
-            {googleConsent ? "☑" : "☐"} I agree to the Terms and have read the
-            Privacy Policy before continuing with Google.
-          </Body>
-        </Pressable>
         <Button
           title="Continue with Google"
           secondary
-          disabled={w.busy || !w.googleAvailable || !googleConsent}
-          onPress={() => void w.signInGoogle()}
+          disabled={w.busy || !w.googleAvailable}
+          onPress={() => {
+            setGoogleConsent(false);
+            setGoogleTermsStep(true);
+          }}
         />
         {!w.googleAvailable && (
           <Muted>

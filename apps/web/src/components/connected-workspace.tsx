@@ -44,6 +44,9 @@ export default function Workspace({
   const [recovering, setRecovering] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [signupProvider, setSignupProvider] = useState<
+    "email" | "google" | null
+  >(null);
   const [orgs, setOrgs] = useState<Org[]>([]);
   const [orgId, setOrgId] = useState("");
   const [orgName, setOrgName] = useState("");
@@ -375,6 +378,69 @@ export default function Workspace({
         </form>
       </main>
     );
+  if (!userId && signupProvider)
+    return (
+      <main className="content">
+        <p className="eyebrow">STEP 2 OF 2</p>
+        <h1>Terms and Conditions</h1>
+        <form
+          className="panel form-grid"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!termsAccepted) return;
+            if (signupProvider === "email") void auth(true);
+            else
+              void run(async () => {
+                await beginGoogleSignIn(
+                  client,
+                  window.location.origin + "/workspace",
+                );
+              });
+          }}
+        >
+          <p>
+            Review our terms before creating an account or continuing with
+            Google. Google can create an account on your first visit.
+          </p>
+          <Link href="/terms" target="_blank">
+            Read Terms and Conditions
+          </Link>
+          <Link href="/privacy" target="_blank">
+            Read Privacy Policy
+          </Link>
+          <label className="check">
+            <input
+              type="checkbox"
+              required
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+            />
+            I agree to the Terms and Conditions and have read the Privacy
+            Policy.
+          </label>
+          <button className="primary" disabled={busy || !termsAccepted}>
+            {busy
+              ? "Working…"
+              : signupProvider === "email"
+                ? "Agree and create account"
+                : "Agree and continue with Google"}
+          </button>
+          <button
+            type="button"
+            className="secondary"
+            disabled={busy}
+            onClick={() => {
+              setSignupProvider(null);
+              setTermsAccepted(false);
+              setMessage("");
+            }}
+          >
+            Back
+          </button>
+          {message && <p role="status">{message}</p>}
+        </form>
+      </main>
+    );
   if (!userId)
     return (
       <main className="content">
@@ -410,11 +476,20 @@ export default function Workspace({
             Create account
           </button>
         </div>
+        {authMode === "signup" && <p className="muted">Step 1 of 2 · Choose email or Google</p>}
         <form
           className="panel form-grid"
           onSubmit={(e) => {
             e.preventDefault();
-            void auth(authMode === "signup");
+            if (authMode === "signup") {
+              if (password !== confirmPassword) {
+                setMessage("Passwords do not match.");
+                return;
+              }
+              setTermsAccepted(false);
+              setMessage("");
+              setSignupProvider("email");
+            } else void auth(false);
           }}
         >
           <label>
@@ -453,27 +528,11 @@ export default function Workspace({
               />
             </label>
           )}
-          <label className="check">
-            <input
-              type="checkbox"
-              checked={termsAccepted}
-              onChange={(e) => setTermsAccepted(e.target.checked)}
-            />
-            For account creation or Google sign-in, I agree to the{" "}
-            <Link href="/terms" target="_blank">
-              Terms and Conditions
-            </Link>{" "}
-            and have read the{" "}
-            <Link href="/privacy" target="_blank">
-              Privacy Policy
-            </Link>
-            .
-          </label>
           <button disabled={busy} className="primary">
             {busy
               ? "Working…"
               : authMode === "signup"
-                ? "Create account with email"
+                ? "Next: Terms and Conditions"
                 : "Sign in with email"}
           </button>
           <p className="muted">Or use your Google account</p>
@@ -487,14 +546,8 @@ export default function Workspace({
                   throw new Error(
                     "Google sign-in setup is still pending. Please use email for now.",
                   );
-                if (!termsAccepted)
-                  throw new Error(
-                    "Please agree to the Terms and read the Privacy Policy before continuing with Google.",
-                  );
-                await beginGoogleSignIn(
-                  client,
-                  window.location.origin + "/workspace",
-                );
+                setTermsAccepted(false);
+                setSignupProvider("google");
               })
             }
           >
